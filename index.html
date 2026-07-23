@@ -32,8 +32,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 20px 10px;
+      justify-content: flex-start;
+      padding: 15px 10px;
       position: relative;
     }
 
@@ -77,12 +77,12 @@
     .app-screen {
       display: none;
       width: 100%;
-      max-width: 1100px;
+      max-width: 1280px; /* Diperlebar agar lebih full */
       z-index: 2;
       position: relative;
       flex-direction: column;
       align-items: center;
-      margin: auto 0;
+      margin: 0 auto;
     }
 
     .app-screen.active {
@@ -112,21 +112,21 @@
       background: #34495e;
       border: 1px solid #7f8c8d;
       color: white;
-      padding: 4px 8px;
+      padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       margin-right: 4px;
     }
     .btn-action.edit { background: #f39c12; border-color: #e67e22; }
     .btn-action.delete { background: #e74c3c; border-color: #c0392b; }
 
-    /* SCREEN 1: SETTING */
+    /* SCREEN 1: SETTING (DIBUAT LEBIH FULL & LEGA) */
     .setting-card {
       background: rgba(9, 23, 46, 0.95);
       border: 3px solid #7899d0;
       border-radius: 20px;
-      padding: 20px;
+      padding: 25px;
       width: 100%;
       box-shadow: 0 10px 30px rgba(0,0,0,0.7);
     }
@@ -134,65 +134,83 @@
     .setting-title {
       color: #ffeb3b;
       text-align: center;
-      font-size: 1.5rem;
-      margin-bottom: 20px;
+      font-size: 1.8rem;
+      margin-bottom: 25px;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
       margin-bottom: 20px;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
 
     .form-group label {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #ffeb3b;
       font-weight: bold;
     }
 
     .form-group input, .form-group select {
-      padding: 10px;
+      padding: 12px;
       border-radius: 8px;
       border: 1px solid #4a6fa5;
       background: #081124;
       color: white;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
 
     .teams-input-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
       margin-top: 10px;
     }
 
-    .camera-container {
+    /* KOTAK PREVIEW FOTO */
+    .photo-upload-container {
       width: 100%;
-      height: 150px;
-      background: #000;
-      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 12px;
       border: 2px dashed #ffeb3b;
+    }
+
+    .photo-preview-box {
+      width: 120px;
+      height: 140px;
+      background: #000;
+      border-radius: 8px;
+      border: 2px solid #7899d0;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 8px;
+    }
+
+    .photo-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .player-table-container {
       width: 100%;
-      max-height: 200px;
+      max-height: 250px;
       overflow-y: auto;
-      margin-top: 15px;
+      margin-top: 20px;
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 8px;
     }
@@ -200,17 +218,17 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
     }
 
     th, td {
-      padding: 8px;
+      padding: 10px 12px;
       text-align: left;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       vertical-align: middle;
     }
 
-    th { background: #1b3561; color: #ffeb3b; }
+    th { background: #1b3561; color: #ffeb3b; font-size: 1rem; }
 
     /* SCREEN 2: LINE-UP */
     .lineup-header { text-align: center; margin-bottom: 15px; }
@@ -270,8 +288,8 @@
     }
 
     .player-card img {
-      width: 60px;
-      height: 70px;
+      width: 65px;
+      height: 75px;
       object-fit: cover;
       border-radius: 6px;
       border: 1px solid #ffeb3b;
@@ -279,7 +297,7 @@
     }
 
     .player-card-name {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: bold;
       color: white;
       white-space: nowrap;
@@ -288,7 +306,7 @@
       width: 100%;
     }
 
-    .player-card-no { font-size: 0.75rem; color: #00ffcc; font-weight: bold; }
+    .player-card-no { font-size: 0.8rem; color: #00ffcc; font-weight: bold; }
 
     /* SCREEN 3: SCOREBOARD */
     .scoreboard-header-title {
@@ -526,7 +544,7 @@
       display: flex;
       justify-content: space-between;
       padding: 4px 8px;
-     po background: #081124;
+      background: #081124;
       border-radius: 5px;
       margin: 3px 0;
       font-size: 0.8rem;
@@ -641,21 +659,20 @@
 </head>
 <body onclick="enableAudioOnUserInteraction()">
 
-  <!-- BACKSOUND AUDIO TAG: Mengarah ke folder backsound/wavin.mp3 -->
+  <!-- BACKSOUND AUDIO TAG -->
   <audio id="bgMusic" loop preload="auto">
-  <source src="./backsound/wavin.mp3" type="audio/mpeg">
-</audio>
-
+    <source src="./backsound/wavin.mp3" type="audio/mpeg">
+  </audio>
 
   <button class="music-control-btn" id="musicToggleBtn" onclick="toggleMusic(event)" title="Mute/Unmute Backsound">🔊</button>
 
-  <!-- SCREEN 1: MENU SETTING -->
+  <!-- SCREEN 1: MENU SETTING (TAMPILAN DIUSULKAN LEBIH FULL) -->
   <div id="screen-setting" class="app-screen active">
     <div class="setting-card">
       <h2 class="setting-title">⚙️ Setting Turnamen & Registrasi Pemain</h2>
 
-      <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-        <div class="form-group" style="margin-bottom: 10px;">
+      <div style="background: rgba(255,255,255,0.05); padding: 18px; border-radius: 12px; margin-bottom: 20px;">
+        <div class="form-group" style="margin-bottom: 15px;">
           <label>Jumlah Tim Peserta Turnamen:</label>
           <select id="selectTeamCount" onchange="renderTeamInputs()">
             <option value="4">4 Tim (Semi Final ➔ Final)</option>
@@ -664,7 +681,7 @@
           </select>
         </div>
 
-        <h3 style="color: #ffeb3b; font-size: 0.95rem; margin-top: 10px;">🏆 Daftar Nama Tim Peserta</h3>
+        <h3 style="color: #ffeb3b; font-size: 1.05rem; margin-top: 15px;">🏆 Daftar Nama Tim Peserta</h3>
         <div class="teams-input-grid" id="teamsInputContainer"></div>
       </div>
 
@@ -675,34 +692,38 @@
         </div>
       </div>
 
-      <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
 
-      <h3 style="color: #00ffcc; margin-bottom: 10px; font-size: 1.1rem;">➕ Registrasi / Edit Pemain</h3>
+      <h3 style="color: #00ffcc; margin-bottom: 15px; font-size: 1.2rem;">➕ Registrasi / Edit Pemain</h3>
       <div class="form-grid">
         <div class="form-group">
           <label>Pilih Tim Pemain:</label>
           <select id="playerTeamSelect"></select>
-          <label style="margin-top: 5px;">Nama Pemain:</label>
+          <label style="margin-top: 10px;">Nama Pemain:</label>
           <input type="text" id="inputPlayerName" placeholder="Contoh: Budi Santoso">
-          <label style="margin-top: 5px;">No. Punggung:</label>
+          <label style="margin-top: 10px;">No. Punggung:</label>
           <input type="text" id="inputPlayerNo" placeholder="Contoh: 10">
         </div>
 
+        <!-- PERUBAHAN FOTO: UPLOAD DARI HP / GALERI -->
         <div class="form-group">
-          <label>Ambil Foto Pemain (*Wajib):</label>
-          <div class="camera-container">
-            <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <img id="photoPreview" style="display:none; width:100%; height:100%; object-fit:cover;">
-          </div>
-          <div style="display:flex; gap: 5px;">
-            <button type="button" class="btn-main" style="padding: 6px; font-size:0.85rem; flex:1;" onclick="takeSnapshot()">📸 Take Photo</button>
-            <button type="button" class="btn-main btn-danger" style="padding: 6px; font-size:0.85rem;" onclick="resetCameraView()">🔄 Retake</button>
+          <label>Foto Pemain (*Wajib):</label>
+          <div class="photo-upload-container">
+            <div class="photo-preview-box">
+              <img id="photoPreview" src="" style="display:none;" alt="Preview Foto">
+              <span id="photoPlaceholder" style="color:#a8c4f0; font-size:0.8rem; text-align:center; padding:5px;">Belum Ada Foto</span>
+            </div>
+            
+            <input type="file" id="fileInputPhoto" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+            
+            <button type="button" class="btn-main" style="padding: 8px 16px; font-size:0.9rem;" onclick="document.getElementById('fileInputPhoto').click()">
+              📁 Pilih Foto dari HP / Galeri
+            </button>
           </div>
         </div>
       </div>
 
-      <button type="button" id="btnSavePlayer" class="btn-main" style="width: 100%; margin-top: 5px;" onclick="addOrUpdatePlayer()">💾 Simpan Pemain</button>
+      <button type="button" id="btnSavePlayer" class="btn-main" style="width: 100%; margin-top: 10px;" onclick="addOrUpdatePlayer()">💾 Simpan Pemain</button>
 
       <div class="player-table-container">
         <table>
@@ -729,7 +750,7 @@
   <!-- SCREEN 2: DISPLAY LINE-UP -->
   <div id="screen-lineup" class="app-screen">
     <div class="lineup-header">
-      <h1>TURNAMEN SEPAK BOLA HUT RI KE-81</h1>
+      <h1>TURNAMEN SEPAK BOLA HUT RI KE-81 RW.01</h1>
       <p style="color: #00ffcc; font-weight: bold; margin-top: 5px;" id="lineupSubMatchTitle">SUSUNAN PEMAIN (LINE-UP)</p>
     </div>
 
@@ -754,7 +775,7 @@
 
   <!-- SCREEN 3: MATCH SCOREBOARD -->
   <div id="screen-scoreboard" class="app-screen">
-    <h1 class="scoreboard-header-title">TURNAMEN SEPAK BOLA HUT RI KE-81</h1>
+    <h1 class="scoreboard-header-title">TURNAMEN SEPAK BOLA HUT RI KE-81 RW.01</h1>
 
     <div class="top-header-info">
       <div class="header-logo-box">
@@ -812,7 +833,7 @@
 
   <!-- SCREEN 4: DIAGRAM TURNAMEN 3D DINAMIS -->
   <div id="screen-bracket" class="app-screen">
-    <h1 style="color: #ffeb3b; text-align: center; font-size: 1.8rem; margin-bottom: 5px;">🏆 DIAGRAM TURNAMEN SISTEM GUGUR 3D</h1>
+    <h1 style="color: #ffeb3b; text-align: center; font-size: 1.8rem; margin-bottom: 5px;">🏆 SOCCER CHAMPIONSHIP HUT.RI KE 81 RW.01</h1>
     <p style="color: #00ffcc; text-align: center; margin-bottom: 15px;">Klik "Mainkan" pada pertandingan yang aktif</p>
 
     <div class="bracket-container-3d">
@@ -837,7 +858,7 @@
 
   <script>
     let playersDB = [];
-    let capturedPhotoData = "";
+    let uploadedPhotoData = "";
     let editingPlayerId = null;
 
     let matchTimerInterval = null;
@@ -848,8 +869,8 @@
 
     // --- DYNAMIC TOURNAMENT STRUCTURE ---
     let totalTeams = 8;
-    let tournamentRounds = []; // Menyimpan struktur babak secara dinamis
-    let activeMatchCoord = null; // { roundIndex, matchIndex }
+    let tournamentRounds = [];
+    let activeMatchCoord = null;
 
     // --- AUDIO SYSTEM LOGIC ---
     const bgMusic = document.getElementById('bgMusic');
@@ -857,19 +878,19 @@
     let isAudioEnabled = false;
     let isMutedManually = false;
 
-function enableAudioOnUserInteraction() {
-  if (!isAudioEnabled) {
-    bgMusic.volume = 0.5;
-    // Paksa browser mengizinkan audio saat sentuhan pertama
-    bgMusic.play().then(() => {
-      isAudioEnabled = true;
-      musicToggleBtn.innerText = "🔊";
-    }).catch(err => {
-      console.log("Autoplay diblokir browser, menunggu klik tombol:", err);
-    });
-  }
-}
-
+    function enableAudioOnUserInteraction() {
+      if (!isAudioEnabled) {
+        bgMusic.volume = 0.5;
+        if (!document.getElementById('screen-scoreboard').classList.contains('active') && !isMutedManually) {
+          bgMusic.play().then(() => {
+            isAudioEnabled = true;
+            musicToggleBtn.innerText = "🔊";
+          }).catch(err => {
+            console.log("Menunggu interaksi klik pengguna untuk audio:", err);
+          });
+        }
+      }
+    }
 
     function toggleMusic(e) {
       e.stopPropagation();
@@ -931,7 +952,6 @@ function enableAudioOnUserInteraction() {
 
       for(let i = 1; i <= totalTeams; i++) {
         const teamName = `RT 0${i}`;
-        // Inputs
         const input = document.createElement('input');
         input.type = "text";
         input.id = `teamInput_${i}`;
@@ -939,7 +959,6 @@ function enableAudioOnUserInteraction() {
         input.placeholder = `Tim ${i}`;
         container.appendChild(input);
 
-        // Options for player registration
         const option = document.createElement('option');
         option.value = teamName;
         option.innerText = teamName;
@@ -964,41 +983,29 @@ function enableAudioOnUserInteraction() {
       document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
 
-      if(screenId === 'screen-setting') { startCamera(); playBgMusic(); }
-      else if(screenId === 'screen-lineup' || screenId === 'screen-bracket') { stopCamera(); playBgMusic(); }
-      else if(screenId === 'screen-scoreboard') { stopCamera(); stopBgMusic(); }
+      if(screenId === 'screen-setting' || screenId === 'screen-lineup' || screenId === 'screen-bracket') {
+        playBgMusic();
+      } else if(screenId === 'screen-scoreboard') {
+        stopBgMusic();
+      }
     }
 
-    // --- CAMERA SYSTEM ---
-    const video = document.getElementById('webcam');
-    const canvas = document.getElementById('canvas');
-    const photoPreview = document.getElementById('photoPreview');
+    // --- HANDLE FILE PHOTO UPLOAD ---
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
 
-    function startCamera() {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-        .then(stream => { video.srcObject = stream; video.style.display = 'block'; photoPreview.style.display = 'none'; })
-        .catch(err => console.log("Kamera tidak aktif: " + err));
-    }
-
-    function stopCamera() {
-      if (video.srcObject) video.srcObject.getTracks().forEach(track => track.stop());
-    }
-
-    function takeSnapshot() {
-      const context = canvas.getContext('2d');
-      canvas.width = video.videoWidth || 320;
-      canvas.height = video.videoHeight || 240;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      capturedPhotoData = canvas.toDataURL('image/png');
-      photoPreview.src = capturedPhotoData;
-      photoPreview.style.display = 'block';
-      video.style.display = 'none';
-    }
-
-    function resetCameraView() {
-      capturedPhotoData = "";
-      photoPreview.style.display = 'none';
-      video.style.display = 'block';
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedPhotoData = e.target.result;
+        const photoPreview = document.getElementById('photoPreview');
+        const photoPlaceholder = document.getElementById('photoPlaceholder');
+        
+        photoPreview.src = uploadedPhotoData;
+        photoPreview.style.display = 'block';
+        photoPlaceholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
     }
 
     function addOrUpdatePlayer() {
@@ -1007,7 +1014,7 @@ function enableAudioOnUserInteraction() {
       const no = document.getElementById('inputPlayerNo').value.trim();
 
       if(!name) { alert("⚠️ Nama pemain wajib diisi!"); return; }
-      if(!capturedPhotoData) { alert("⚠️ Foto pemain WAJIB diambil!"); return; }
+      if(!uploadedPhotoData) { alert("⚠️ Foto pemain WAJIB diupload!"); return; }
 
       if(editingPlayerId !== null) {
         const index = playersDB.findIndex(p => p.id === editingPlayerId);
@@ -1015,12 +1022,12 @@ function enableAudioOnUserInteraction() {
           playersDB[index].team = team;
           playersDB[index].name = name;
           playersDB[index].no = no || "-";
-          playersDB[index].photo = capturedPhotoData;
+          playersDB[index].photo = uploadedPhotoData;
         }
         editingPlayerId = null;
         document.getElementById('btnSavePlayer').innerText = "💾 Simpan Pemain";
       } else {
-        playersDB.push({ id: Date.now(), team, name, no: no || "-", photo: capturedPhotoData });
+        playersDB.push({ id: Date.now(), team, name, no: no || "-", photo: uploadedPhotoData });
       }
 
       renderPlayerTable();
@@ -1034,10 +1041,14 @@ function enableAudioOnUserInteraction() {
       document.getElementById('playerTeamSelect').value = player.team;
       document.getElementById('inputPlayerName').value = player.name;
       document.getElementById('inputPlayerNo').value = player.no;
-      capturedPhotoData = player.photo;
-      photoPreview.src = capturedPhotoData;
+      
+      uploadedPhotoData = player.photo;
+      const photoPreview = document.getElementById('photoPreview');
+      const photoPlaceholder = document.getElementById('photoPlaceholder');
+      photoPreview.src = uploadedPhotoData;
       photoPreview.style.display = 'block';
-      video.style.display = 'none';
+      photoPlaceholder.style.display = 'none';
+
       document.getElementById('btnSavePlayer').innerText = "🔄 Perbarui Data Pemain";
     }
 
@@ -1052,9 +1063,16 @@ function enableAudioOnUserInteraction() {
     function resetPlayerForm() {
       document.getElementById('inputPlayerName').value = "";
       document.getElementById('inputPlayerNo').value = "";
+      document.getElementById('fileInputPhoto').value = "";
+      uploadedPhotoData = "";
+      
+      const photoPreview = document.getElementById('photoPreview');
+      const photoPlaceholder = document.getElementById('photoPlaceholder');
+      photoPreview.style.display = 'none';
+      photoPlaceholder.style.display = 'block';
+
       editingPlayerId = null;
       document.getElementById('btnSavePlayer').innerText = "💾 Simpan Pemain";
-      resetCameraView();
     }
 
     function renderPlayerTable() {
@@ -1063,7 +1081,7 @@ function enableAudioOnUserInteraction() {
       playersDB.forEach(p => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><img src="${p.photo}" style="width:30px; height:35px; border-radius:4px; object-fit:cover;"></td>
+          <td><img src="${p.photo}" style="width:35px; height:40px; border-radius:4px; object-fit:cover;"></td>
           <td><strong>${p.team}</strong></td>
           <td>#${p.no}</td>
           <td>${p.name}</td>
@@ -1094,7 +1112,6 @@ function enableAudioOnUserInteraction() {
 
       tournamentRounds.push({ title: roundTitle, matches: round1Matches });
 
-      // Generate Next Rounds
       while(matchCount > 1) {
         matchCount = matchCount / 2;
         let title = matchCount === 4 ? "PEREMPAT FINAL" : (matchCount === 2 ? "SEMI FINAL" : "GRAND FINAL");
@@ -1118,7 +1135,7 @@ function enableAudioOnUserInteraction() {
         col.className = "bracket-column";
 
         const titleDiv = document.createElement('div');
-        titleDiv.style.cssText = "font-size:0.8rem; color:#00ffcc; text-align:center; font-weight:bold;";
+        titleDiv.style.cssText = "font-size:0.85rem; color:#00ffcc; text-align:center; font-weight:bold;";
         titleDiv.innerText = round.title;
         col.appendChild(titleDiv);
 
@@ -1126,7 +1143,6 @@ function enableAudioOnUserInteraction() {
           const matchBox = document.createElement('div');
           matchBox.className = "bracket-match";
 
-          // Status tombol
           let canPlay = true;
           if(m.team1 === "TBD" || m.team2 === "TBD" || m.done) canPlay = false;
 
@@ -1136,7 +1152,7 @@ function enableAudioOnUserInteraction() {
           matchBox.innerHTML = `
             <div class="bracket-team ${t1Class}"><span>${m.team1}</span><span>${m.done ? m.score1 : '-'}</span></div>
             <div class="bracket-team ${t2Class}"><span>${m.team2}</span><span>${m.done ? m.score2 : '-'}</span></div>
-            <button class="btn-main" style="width:100%; padding:3px; font-size:0.75rem; margin-top:5px;" 
+            <button class="btn-main" style="width:100%; padding:4px; font-size:0.8rem; margin-top:5px;" 
                     ${canPlay ? '' : 'disabled'} onclick="prepareDynamicMatch(${rIndex}, ${mIndex})">
               ${m.done ? '✔ Selesai' : '▶️ Mainkan'}
             </button>
@@ -1147,7 +1163,6 @@ function enableAudioOnUserInteraction() {
         board.appendChild(col);
       });
 
-      // Trophy Container untuk Juara Utama
       const finalRound = tournamentRounds[tournamentRounds.length - 1];
       const finalMatch = finalRound.matches[0];
 
@@ -1330,7 +1345,6 @@ function enableAudioOnUserInteraction() {
         match.winner = s1 > s2 ? match.team1 : match.team2;
         match.done = true;
 
-        // TERUSKAN PEMENANG KE BABAK SELANJUTNYA (JIKA ADA)
         if(rIndex + 1 < tournamentRounds.length) {
           const nextRound = tournamentRounds[rIndex + 1];
           const nextMatchIndex = Math.floor(mIndex / 2);
@@ -1354,7 +1368,6 @@ function enableAudioOnUserInteraction() {
 
     // Initial load
     renderTeamInputs();
-    startCamera();
   </script>
 
   <!-- PWA Service Worker Registration -->
