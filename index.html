@@ -33,7 +33,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 65px 10px 15px 10px; /* Padding top disesuaikan untuk Top Global Bar */
+      padding: 70px 10px 15px 10px; /* Space untuk Navbar Atas */
       position: relative;
     }
 
@@ -59,40 +59,42 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 55px;
-      background: rgba(8, 17, 36, 0.95);
+      height: 60px;
+      background: rgba(8, 17, 36, 0.98);
       border-bottom: 2px solid #7899d0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 15px;
-      z-index: 1000;
-      backdrop-filter: blur(5px);
+      padding: 0 12px;
+      z-index: 9999;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
 
     .nav-btn-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .icon-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       border: 1px solid #7899d0;
       color: white;
       border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
+      padding: 8px 12px;
+      font-size: 0.85rem;
       font-weight: bold;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.2s;
     }
     .icon-btn:active { transform: scale(0.95); }
-    .icon-btn.cast-btn { border-color: #00ffcc; color: #00ffcc; }
-    .icon-btn.close-btn { border-color: #e74c3c; background: rgba(231, 76, 60, 0.2); color: #ff6b6b; }
+    .icon-btn.cast-btn { border-color: #00ffcc; color: #00ffcc; background: rgba(0, 255, 204, 0.1); }
+    .icon-btn.close-btn { border-color: #e74c3c; background: rgba(231, 76, 60, 0.25); color: #ff6b6b; }
+    .icon-btn.back-btn { border-color: #f1c40f; color: #ffeb3b; }
 
     .app-screen {
       display: none;
@@ -193,6 +195,16 @@
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 12px;
       margin-top: 10px;
+    }
+
+    .teams-input-grid input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #4a6fa5;
+      background: #081124;
+      color: #00ffcc;
+      font-weight: bold;
+      font-size: 0.95rem;
     }
 
     /* PREVIEW FOTO */
@@ -512,7 +524,7 @@
     .half-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: white; transform: translateX(-50%); }
     .center-circle { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); }
 
-    /* SCREEN 4: DIAGRAM TURNAMEN 3D DINAMIS */
+    /* SCREEN 4: DIAGRAM TURNAMEN 3D */
     .bracket-container-3d {
       perspective: 1000px;
       width: 100%;
@@ -602,7 +614,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
+      z-index: 10000;
       align-items: center;
       justify-content: center;
       padding: 15px;
@@ -669,25 +681,27 @@
 </head>
 <body onclick="enableAudioOnUserInteraction()">
 
-  <!-- NAVBAR NAVBAR ATAS (BACK, CAST TO TV, MUSIC, CLOSE) -->
+  <!-- NAVBAR ATAS UTAMA (TERDAPAT TOMBOL BACK, CAST TV, MUSIC, CLOSE) -->
   <header class="top-global-bar">
     <div class="nav-btn-group">
-      <button class="icon-btn" id="btnGlobalBack" onclick="handleGlobalBack()">⬅️ Kembali</button>
+      <!-- TOMBOL BACK KEMBALI -->
+      <button class="icon-btn back-btn" id="btnGlobalBack" onclick="handleGlobalBack()">⬅️ Kembali</button>
     </div>
 
     <div class="nav-btn-group">
-      <!-- TOMBOL CAST TO TV SEPERTI YOUTUBE -->
-      <button class="icon-btn cast-btn" onclick="startCastToTV()" title="Tautkan ke Layar TV">
+      <!-- TOMBOL CAST TO TV -->
+      <button class="icon-btn cast-btn" onclick="startCastToTV()" title="Transmisikan ke TV">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.92-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
         </svg>
         Cast TV
       </button>
 
-      <button class="icon-btn" id="musicToggleBtn" onclick="toggleMusic(event)" title="Mute/Unmute Backsound">🔊 Music</button>
+      <!-- TOMBOL MUTE / UNMUTE AUDIO -->
+      <button class="icon-btn" id="musicToggleBtn" onclick="toggleMusic(event)" title="Mute/Unmute Music">🔊 Music</button>
 
-      <!-- TOMBOL CLOSE APLIKASI -->
-      <button class="icon-btn close-btn" onclick="closeApplication()" title="Keluar Aplikasi">❌ Keluar</button>
+      <!-- TOMBOL KELUAR APLIKASI -->
+      <button class="icon-btn close-btn" onclick="closeApplication()" title="Tutup Aplikasi">❌ Keluar</button>
     </div>
   </header>
 
@@ -711,7 +725,7 @@
           </select>
         </div>
 
-        <h3 style="color: #ffeb3b; font-size: 1.05rem; margin-top: 15px;">🏆 Daftar Nama Tim Peserta</h3>
+        <h3 style="color: #ffeb3b; font-size: 1.05rem; margin-top: 15px;">🏆 Ubah Nama Tim Peserta (Otomatis Sync Ke Registrasi)</h3>
         <div class="teams-input-grid" id="teamsInputContainer"></div>
       </div>
 
@@ -857,7 +871,7 @@
     <button class="btn-main btn-danger" style="margin-top: 25px; width: 100%;" onclick="finishMatch()">🏁 SELESAI PERTANDINGAN (Update Diagram 3D) ➔</button>
   </div>
 
-  <!-- SCREEN 4: DIAGRAM TURNAMEN 3D DINAMIS -->
+  <!-- SCREEN 4: DIAGRAM TURNAMEN 3D -->
   <div id="screen-bracket" class="app-screen">
     <h1 style="color: #ffeb3b; text-align: center; font-size: 1.8rem; margin-bottom: 5px;">🏆 DIAGRAM TURNAMEN SISTEM GUGUR 3D</h1>
     <p style="color: #00ffcc; text-align: center; margin-bottom: 15px;">Klik "Mainkan" pada pertandingan yang aktif</p>
@@ -896,7 +910,7 @@
     let activeMatchCoord = null;
     let screenHistory = ['screen-setting'];
 
-    // --- AUDIO SYSTEM LOGIC ---
+    // --- SYSTEM AUDIO ---
     const bgMusic = document.getElementById('bgMusic');
     const musicToggleBtn = document.getElementById('musicToggleBtn');
     let isAudioEnabled = false;
@@ -936,36 +950,34 @@
       bgMusic.currentTime = 0;
     }
 
-    // --- CAST TO TV / SCREEN SHARE ---
+    // --- CAST TO TV LOGIC ---
     async function startCastToTV() {
       try {
         if ('presentation' in navigator && window.PresentationRequest) {
           const request = new PresentationRequest([window.location.href]);
-          request.start()
-            .then(connection => console.log("Connected to Cast TV Screen:", connection))
-            .catch(err => console.log("User canceled or no cast device:", err));
+          request.start().then(connection => console.log("Connected to Cast TV", connection))
+                         .catch(e => console.log("Cast canceled:", e));
         } else if (navigator.share) {
           await navigator.share({
             title: 'Turnamen HUT RI 81',
-            text: 'Tampilkan Scoreboard ke Layar TV',
+            text: 'Buka Tampilan Scoreboard di Layar TV',
             url: window.location.href,
           });
         } else {
-          alert("📺 Untuk menghubungkan ke TV:\n\nGunakan fitur 'Cast / Transmisikan Layar' dari menu bawaan HP atau Google Chrome Anda ke Smart TV / Chromecast.");
+          alert("📺 PETUNJUK CAST TO TV:\n\nGunakan fitur 'Cast / Transmisikan Layar' (Google Cast / Smart View) dari menu HP atau Browser Chrome Anda untuk menghubungkan ke TV secara instan.");
         }
       } catch (err) {
-        alert("Fitur Cast siap dipicu melalui fitur Screen Mirroring / Smart View HP Anda ke TV.");
+        alert("Pemicu Cast siap. Gunakan Screen Mirroring HP ke TV.");
       }
     }
 
     // --- KELUAR APLIKASI ---
     function closeApplication() {
-      if (confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
+      if (confirm("Apakah Anda yakin ingin menutup aplikasi?")) {
         window.close();
-        // Fallback jika dibuka langsung dari tab browser
         setTimeout(() => {
-          alert("Silakan tutup tab atau jendela browser ini untuk keluar.");
-        }, 300);
+          alert("Aplikasi siap ditutup. Silakan tutup tab atau aplikasi Anda.");
+        }, 200);
       }
     }
 
@@ -979,7 +991,6 @@
       document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
 
-      // Tampilkan/Sembunyikan Tombol Back
       const backBtn = document.getElementById('btnGlobalBack');
       if (screenId === 'screen-setting') {
         backBtn.style.display = "none";
@@ -1030,40 +1041,47 @@
       } catch (e) {}
     }
 
+    // --- REALTIME SYNC NAMA TIM KE DROPDOWN REGISTRASI ---
     function renderTeamInputs() {
       totalTeams = parseInt(document.getElementById('selectTeamCount').value);
       const container = document.getElementById('teamsInputContainer');
-      const teamSelect = document.getElementById('playerTeamSelect');
 
       container.innerHTML = "";
-      teamSelect.innerHTML = "";
 
       for(let i = 1; i <= totalTeams; i++) {
-        const teamName = `RT 0${i}`;
+        const defaultName = `Tim 0${i}`;
         const input = document.createElement('input');
         input.type = "text";
         input.id = `teamInput_${i}`;
-        input.value = teamName;
-        input.placeholder = `Tim ${i}`;
+        input.value = defaultName;
+        input.placeholder = `Nama Tim ${i}`;
+        
+        // Memicu update realtime setiap kali diketik
+        input.oninput = updatePlayerTeamSelectOptions;
+        
         container.appendChild(input);
-
-        const option = document.createElement('option');
-        option.value = teamName;
-        option.innerText = teamName;
-        teamSelect.appendChild(option);
       }
+
+      updatePlayerTeamSelectOptions();
     }
 
     function updatePlayerTeamSelectOptions() {
       const teamSelect = document.getElementById('playerTeamSelect');
+      const currentValue = teamSelect.value;
       teamSelect.innerHTML = "";
+
       for(let i = 1; i <= totalTeams; i++) {
-        const val = document.getElementById(`teamInput_${i}`).value || `Tim ${i}`;
+        const inputEl = document.getElementById(`teamInput_${i}`);
+        const val = (inputEl && inputEl.value.trim() !== "") ? inputEl.value.trim() : `Tim 0${i}`;
+        
         const option = document.createElement('option');
         option.value = val;
         option.innerText = val;
         teamSelect.appendChild(option);
       }
+
+      // Pertahankan pilihan jika masih ada di daftar
+      if (currentValue) teamSelect.value = currentValue;
     }
 
     function handleFileSelect(event) {
@@ -1170,7 +1188,6 @@
     }
 
     function initTournamentAndGoToBracket() {
-      updatePlayerTeamSelectOptions();
       tournamentRounds = [];
 
       let round1Matches = [];
@@ -1179,8 +1196,12 @@
       let roundTitle = matchCount === 8 ? "BABAK 16 BESAR" : (matchCount === 4 ? "PEREMPAT FINAL" : "SEMI FINAL");
 
       for(let i = 0; i < matchCount; i++) {
-        let t1 = document.getElementById(`teamInput_${(i*2)+1}`).value || `Tim ${(i*2)+1}`;
-        let t2 = document.getElementById(`teamInput_${(i*2)+2}`).value || `Tim ${(i*2)+2}`;
+        let t1Input = document.getElementById(`teamInput_${(i*2)+1}`);
+        let t2Input = document.getElementById(`teamInput_${(i*2)+2}`);
+
+        let t1 = (t1Input && t1Input.value.trim() !== "") ? t1Input.value.trim() : `Tim ${(i*2)+1}`;
+        let t2 = (t2Input && t2Input.value.trim() !== "") ? t2Input.value.trim() : `Tim ${(i*2)+2}`;
+
         round1Matches.push({ team1: t1, team2: t2, score1: 0, score2: 0, winner: "", done: false });
       }
 
