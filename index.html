@@ -641,7 +641,8 @@
 </head>
 <body onclick="enableAudioOnUserInteraction()">
 
-<audio id="bgMusic" loop src="backsound.mp3"></audio>
+  <!-- BACKSOUND AUDIO TAG: Mengarah ke folder backsound/wavin.mp3 -->
+  <audio id="bgMusic" loop src="backsound/wavin.mp3"></audio>
 
   <button class="music-control-btn" id="musicToggleBtn" onclick="toggleMusic(event)" title="Mute/Unmute Backsound">🔊</button>
 
@@ -649,7 +650,7 @@
   <div id="screen-setting" class="app-screen active">
     <div class="setting-card">
       <h2 class="setting-title">⚙️ Setting Turnamen & Registrasi Pemain</h2>
-      
+
       <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 10px;">
           <label>Jumlah Tim Peserta Turnamen:</label>
@@ -917,7 +918,7 @@
       totalTeams = parseInt(document.getElementById('selectTeamCount').value);
       const container = document.getElementById('teamsInputContainer');
       const teamSelect = document.getElementById('playerTeamSelect');
-      
+
       container.innerHTML = "";
       teamSelect.innerHTML = "";
 
@@ -1256,7 +1257,7 @@
 
       const targetTeamName = scoreId === 'score1' ? match.team1 : match.team2;
       const teamPlayers = playersDB.filter(p => p.team === targetTeamName);
-      
+
       document.getElementById('modalGoalTitle').innerText = `⚽ PILIH PENCETAK GOL (${targetTeamName})`;
       const grid = document.getElementById('modalPlayerList');
       grid.innerHTML = "";
