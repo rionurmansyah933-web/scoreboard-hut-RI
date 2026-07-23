@@ -1,0 +1,21 @@
+{
+  "name": "Scoreboard HUT RI 81",
+  "short_name": "ScoreboardRI",
+  "description": "Aplikasi Match Scoreboard & Line-Up Turnamen HUT RI 81",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#081124",
+  "theme_color": "#081124",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/dt6s9FSQ/hut-ri-81-3867-512x512.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.postimg.cc/dt6s9FSQ/hut-ri-81-3867-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

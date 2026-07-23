@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Aplikasi Match Scoreboard & Line-Up - HUT RI 81</title>
+
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#081124">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at center, #183e7a 0%, #081124 100%);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 10px;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-conic-gradient(
+        from 0deg,
+        rgba(255, 255, 255, 0.04) 0deg 10deg,
+        transparent 10deg 20deg
+      );
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .music-control-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #ffeb3b;
+      color: #ffeb3b;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+    }
+    .music-control-btn:active { transform: scale(0.9); }
+
+    .app-screen {
+      display: none;
+      width: 100%;
+      max-width: 1100px;
+      z-index: 2;
+      position: relative;
+      flex-direction: column;
+      align-items: center;
+      margin: auto 0;
+    }
+
+    .app-screen.active {
+      display: flex;
+    }
+
+    .btn-main {
+      background: linear-gradient(180deg, #27ae60 0%, #1e8449 100%);
+      color: white;
+      border: 2px solid #2ecc71;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: transform 0.1s, background 0.2s;
+    }
+    .btn-main:active { transform: scale(0.95); }
+
+    .btn-danger {
+      background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+      border-color: #f1c40f;
+    }
+
+    .btn-action {
+      background: #34495e;
+      border: 1px solid #7f8c8d;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-right: 4px;
+    }
+    .btn-action.edit { background: #f39c12; border-color: #e67e22; }
+    .btn-action.delete { background: #e74c3c; border-color: #c0392b; }
+
+    /* SCREEN 1: SETTING */
+    .setting-card {
+      background: rgba(9, 23, 46, 0.95);
+      border: 3px solid #7899d0;
+      border-radius: 20px;
+      padding: 20px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .setting-title {
+      color: #ffeb3b;
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      color: #ffeb3b;
+      font-weight: bold;
+    }
+
+    .form-group input, .form-group select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #4a6fa5;
+      background: #081124;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    .teams-input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .camera-container {
+      width: 100%;
+      height: 150px;
+      background: #000;
+      border-radius: 10px;
+      border: 2px dashed #ffeb3b;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .player-table-container {
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 15px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      vertical-align: middle;
+    }
+
+    th { background: #1b3561; color: #ffeb3b; }
+
+    /* SCREEN 2: LINE-UP */
+    .lineup-header { text-align: center; margin-bottom: 15px; }
+    .lineup-header h1 {
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: #ffeb3b;
+      text-shadow: 0 0 10px rgba(255,235,59,0.5);
+    }
+
+    .lineup-teams-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    @media(min-width: 768px) {
+      .lineup-teams-container { flex-direction: row; }
+    }
+
+    .team-lineup-box {
+      flex: 1;
+      background: rgba(9, 23, 46, 0.9);
+      border: 2px solid #a8c4f0;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+    }
+
+    .team-lineup-title {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #ffeb3b;
+      text-align: center;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(255,255,255,0.2);
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+
+    .lineup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+    }
+
+    .player-card {
+      background: linear-gradient(180deg, #162a4a 0%, #081124 100%);
+      border: 1px solid #7899d0;
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .player-card img {
+      width: 60px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #ffeb3b;
+      margin-bottom: 5px;
+    }
+
+    .player-card-name {
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .player-card-no { font-size: 0.75rem; color: #00ffcc; font-weight: bold; }
+
+    /* SCREEN 3: SCOREBOARD */
+    .scoreboard-header-title {
+      font-size: clamp(1.1rem, 2.8vw, 1.8rem);
+      color: #ffeb3b;
+      text-align: center;
+      margin-bottom: 12px;
+      font-weight: 900;
+      text-shadow: 0 0 10px rgba(255, 235, 59, 0.4);
+      letter-spacing: 0.5px;
+    }
+
+    .top-header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 15px;
+      gap: 10px;
+    }
+
+    .header-logo-box {
+      width: clamp(50px, 8vw, 80px);
+      height: clamp(50px, 8vw, 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 5px;
+      flex-shrink: 0;
+    }
+    .header-logo-box img { width: 100%; height: 100%; object-fit: contain; }
+
+    .timer-container {
+      background: #09172e;
+      border: 2px solid #7899d0;
+      border-radius: 20px;
+      padding: 4px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .match-timer {
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-weight: bold;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ffcc;
+    }
+
+    .top-bar-wrapper {
+      width: 100%;
+      background: linear-gradient(180deg, #ffffff 0%, #dcdcdc 40%, #8a8a8a 100%);
+      border-radius: 50px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .team-badge {
+      width: clamp(35px, 6vw, 50px);
+      height: clamp(35px, 6vw, 50px);
+      border-radius: 50%;
+      background: #0e1e38;
+      border: 2px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+
+    .team-display-title {
+      flex: 1;
+      text-align: center;
+      color: #09172e;
+      font-size: clamp(0.9rem, 2vw, 1.3rem);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .scoreboard-card {
+      width: 100%;
+      background: linear-gradient(180deg, #1b3561 0%, #09152a 100%);
+      border-radius: 25px;
+      border: 3px solid #7899d0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .scores-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .score-box {
+      position: relative;
+      background: linear-gradient(180deg, #0d1e3d 0%, #030812 100%);
+      width: clamp(80px, 18vw, 130px);
+      height: clamp(80px, 18vw, 130px);
+      border-radius: 16px;
+      border: 3px solid #a8c4f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    @keyframes goalBlink {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(1.15); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .score-box.is-goal { border-color: #00ffcc !important; }
+    .score-box.is-goal .goal-overlay { display: flex; }
+
+    .goal-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: #081124;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      animation: goalBlink 0.5s infinite alternate ease-in-out;
+    }
+
+    .goal-overlay span {
+      font-size: clamp(1rem, 3vw, 1.8rem);
+      font-weight: 900;
+      color: #ffeb3b;
+    }
+
+    .details-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 10px;
+    }
+
+    .details-col { flex: 1; max-height: 100px; overflow-y: auto; }
+    .player-list { list-style: none; font-size: 0.85rem; }
+    .player-list li { margin-bottom: 4px; background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 4px; }
+
+    /* Lapangan 3D */
+    .field-wrapper {
+      position: relative;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 800px;
+      height: 140px;
+      perspective: 600px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .soccer-field {
+      width: 90%; height: 100%;
+      background: repeating-linear-gradient(90deg, #4caf50 0px, #4caf50 30px, #43a047 30px, #43a047 60px);
+      border: 3px solid #ffffff;
+      border-radius: 6px;
+      transform: rotateX(45deg);
+      transform-origin: top center;
+      position: relative;
+    }
+    .field-lines { position: absolute; inset: 0; border: 2px solid white; }
+    .half-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: white; transform: translateX(-50%); }
+    .center-circle { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); }
+
+    /* SCREEN 4: DIAGRAM TURNAMEN 3D DINAMIS */
+    .bracket-container-3d {
+      perspective: 1000px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+    }
+
+    .bracket-board {
+      transform: rotateX(10deg);
+      transform-style: preserve-3d;
+      background: rgba(8, 17, 36, 0.95);
+      border: 3px solid #ffeb3b;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 20px 50px rgba(0,255,204,0.2), inset 0 0 15px rgba(255,235,59,0.3);
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      min-width: max-content;
+      transition: transform 0.5s ease;
+    }
+
+    .bracket-board:hover {
+      transform: rotateX(0deg) scale(1.01);
+    }
+
+    .bracket-column {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      justify-content: space-around;
+      min-width: 170px;
+    }
+
+    .bracket-match {
+      background: #112240;
+      border: 2px solid #7899d0;
+      border-radius: 10px;
+      padding: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .bracket-team {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 8px;
+      background: #081124;
+      border-radius: 5px;
+      margin: 3px 0;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .bracket-team.winner {
+      background: linear-gradient(90deg, #1e8449 0%, #2ecc71 100%);
+      color: white;
+      box-shadow: 0 0 8px #2ecc71;
+    }
+
+    .bracket-team.loser {
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
+
+    .trophy-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+    }
+
+    .trophy-icon {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 0 15px #ffeb3b);
+      animation: floatTrophy 2s infinite alternate ease-in-out;
+    }
+
+    @keyframes floatTrophy {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-10px); }
+    }
+
+    /* MODAL PILIH PEMAIN GOL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: #09172e;
+      border: 3px solid #ffeb3b;
+      border-radius: 20px;
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      color: #ffeb3b;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .modal-player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      overflow-y: auto;
+      padding: 10px 5px;
+      margin-bottom: 15px;
+    }
+
+    .btn-select-player {
+      background: #112240;
+      border: 2px solid #7899d0;
+      border-radius: 12px;
+      padding: 8px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .btn-select-player:hover, .btn-select-player:active {
+      background: #1b3561;
+      border-color: #00ffcc;
+      transform: scale(0.98);
+    }
+
+    .btn-select-player img {
+      width: 50px;
+      height: 55px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #ffeb3b;
+      margin-bottom: 6px;
+    }
+
+    .btn-select-player .p-name { font-size: 0.85rem; font-weight: bold; }
+    .btn-select-player .p-no { font-size: 0.75rem; color: #00ffcc; }
+  </style>
+</head>
+<body onclick="enableAudioOnUserInteraction()">
+
+  <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a8e1b6.mp3?filename=stadium-energy-sport-10332.mp3"></audio>
+
+  <button class="music-control-btn" id="musicToggleBtn" onclick="toggleMusic(event)" title="Mute/Unmute Backsound">🔊</button>
+
+  <!-- SCREEN 1: MENU SETTING -->
+  <div id="screen-setting" class="app-screen active">
+    <div class="setting-card">
+      <h2 class="setting-title">⚙️ Setting Turnamen & Registrasi Pemain</h2>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label>Jumlah Tim Peserta Turnamen:</label>
+          <select id="selectTeamCount" onchange="renderTeamInputs()">
+            <option value="4">4 Tim (Semi Final ➔ Final)</option>
+            <option value="8" selected>8 Tim (Perempat Final ➔ SF ➔ Final)</option>
+            <option value="16">16 Tim (16 Besar ➔ QF ➔ SF ➔ Final)</option>
+          </select>
+        </div>
+
+        <h3 style="color: #ffeb3b; font-size: 0.95rem; margin-top: 10px;">🏆 Daftar Nama Tim Peserta</h3>
+        <div class="teams-input-grid" id="teamsInputContainer"></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Durasi Pertandingan (Menit):</label>
+          <input type="number" id="inputMatchDuration" value="10" min="1">
+        </div>
+      </div>
+
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+
+      <h3 style="color: #00ffcc; margin-bottom: 10px; font-size: 1.1rem;">➕ Registrasi / Edit Pemain</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Pilih Tim Pemain:</label>
+          <select id="playerTeamSelect"></select>
+          <label style="margin-top: 5px;">Nama Pemain:</label>
+          <input type="text" id="inputPlayerName" placeholder="Contoh: Budi Santoso">
+          <label style="margin-top: 5px;">No. Punggung:</label>
+          <input type="text" id="inputPlayerNo" placeholder="Contoh: 10">
+        </div>
+
+        <div class="form-group">
+          <label>Ambil Foto Pemain (*Wajib):</label>
+          <div class="camera-container">
+            <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="photoPreview" style="display:none; width:100%; height:100%; object-fit:cover;">
+          </div>
+          <div style="display:flex; gap: 5px;">
+            <button type="button" class="btn-main" style="padding: 6px; font-size:0.85rem; flex:1;" onclick="takeSnapshot()">📸 Take Photo</button>
+            <button type="button" class="btn-main btn-danger" style="padding: 6px; font-size:0.85rem;" onclick="resetCameraView()">🔄 Retake</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" id="btnSavePlayer" class="btn-main" style="width: 100%; margin-top: 5px;" onclick="addOrUpdatePlayer()">💾 Simpan Pemain</button>
+
+      <div class="player-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Tim Side</th>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="playerTableBody"></tbody>
+        </table>
+      </div>
+
+      <button class="btn-main" style="width: 100%; margin-top: 20px; background: linear-gradient(180deg, #f39c12 0%, #d35400 100%); border-color: #f1c40f;" onclick="initTournamentAndGoToBracket()">
+        🏆 Tampilkan Diagram Turnamen Dinamis ➔
+      </button>
+    </div>
+  </div>
+
+
+  <!-- SCREEN 2: DISPLAY LINE-UP -->
+  <div id="screen-lineup" class="app-screen">
+    <div class="lineup-header">
+      <h1>TURNAMEN SEPAK BOLA HUT RI KE-81</h1>
+      <p style="color: #00ffcc; font-weight: bold; margin-top: 5px;" id="lineupSubMatchTitle">SUSUNAN PEMAIN (LINE-UP)</p>
+    </div>
+
+    <div class="lineup-teams-container">
+      <div class="team-lineup-box">
+        <div class="team-lineup-title" id="lineupTitleA">TIM A</div>
+        <div class="lineup-grid" id="lineupGridA"></div>
+      </div>
+
+      <div class="team-lineup-box">
+        <div class="team-lineup-title" id="lineupTitleB">TIM B</div>
+        <div class="lineup-grid" id="lineupGridB"></div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; width: 100%; justify-content: center; margin-bottom: 20px;">
+      <button class="btn-main btn-danger" onclick="switchScreen('screen-bracket')">⬅️ Kembali ke Diagram</button>
+      <button class="btn-main" style="font-size: 1.2rem;" onclick="startMatch()">⚽ MULAI PERTANDINGAN!</button>
+    </div>
+  </div>
+
+
+  <!-- SCREEN 3: MATCH SCOREBOARD -->
+  <div id="screen-scoreboard" class="app-screen">
+    <h1 class="scoreboard-header-title">TURNAMEN SEPAK BOLA HUT RI KE-81</h1>
+
+    <div class="top-header-info">
+      <div class="header-logo-box">
+        <img src="https://i.postimg.cc/bwZG5dnC/BQN6UGy-Imgur.png" alt="Logo RW">
+      </div>
+
+      <div class="timer-container">
+        <div class="match-timer" id="timer-display">00:00</div>
+        <button class="btn-main" id="start-stop-btn" style="padding: 4px 12px; font-size: 0.85rem;" onclick="toggleTimer()">Mulai</button>
+      </div>
+
+      <div class="header-logo-box">
+        <img src="https://i.postimg.cc/dt6s9FSQ/hut-ri-81-3867-512x512.png" alt="Logo HUT RI">
+      </div>
+    </div>
+
+    <div class="top-bar-wrapper">
+      <div class="team-badge" id="badgeA">A</div>
+      <div class="team-display-title" id="matchTeamDisplay">TIM A VS TIM B</div>
+      <div class="team-badge" id="badgeB">B</div>
+    </div>
+
+    <div class="scoreboard-card">
+      <div class="scores-row">
+        <div class="score-box" id="score1-box" onclick="changeScore('score1', 1)" oncontextmenu="changeScore('score1', -1); return false;">
+          <span id="score1">0</span>
+          <div class="goal-overlay"><span>⚽ GOAL!</span></div>
+        </div>
+
+        <div style="font-weight: 900; color: #ffeb3b; font-size: 1.5rem;">VS</div>
+
+        <div class="score-box" id="score2-box" onclick="changeScore('score2', 1)" oncontextmenu="changeScore('score2', -1); return false;">
+          <span id="score2">0</span>
+          <div class="goal-overlay"><span>⚽ GOAL!</span></div>
+        </div>
+      </div>
+
+      <div class="details-row">
+        <div class="details-col"><ul class="player-list" id="goalListA"></ul></div>
+        <div class="details-col" style="text-align: right;"><ul class="player-list" id="goalListB"></ul></div>
+      </div>
+    </div>
+
+    <div class="field-wrapper">
+      <div class="soccer-field">
+        <div class="field-lines"></div>
+        <div class="half-line"></div>
+        <div class="center-circle"></div>
+      </div>
+    </div>
+
+    <button class="btn-main btn-danger" style="margin-top: 25px; width: 100%;" onclick="finishMatch()">🏁 SELESAI PERTANDINGAN (Update Diagram 3D) ➔</button>
+  </div>
+
+
+  <!-- SCREEN 4: DIAGRAM TURNAMEN 3D DINAMIS -->
+  <div id="screen-bracket" class="app-screen">
+    <h1 style="color: #ffeb3b; text-align: center; font-size: 1.8rem; margin-bottom: 5px;">🏆 DIAGRAM TURNAMEN SISTEM GUGUR 3D</h1>
+    <p style="color: #00ffcc; text-align: center; margin-bottom: 15px;">Klik "Mainkan" pada pertandingan yang aktif</p>
+
+    <div class="bracket-container-3d">
+      <div class="bracket-board" id="dynamicBracketBoard"></div>
+    </div>
+
+    <div style="margin-top: 20px; display: flex; gap: 15px;">
+      <button class="btn-main btn-danger" onclick="resetTournamentAndGoSetting()">⚙️ Reset & Kembali ke Setting Baru</button>
+    </div>
+  </div>
+
+
+  <!-- MODAL SELECTION PEMAIN PENCETAK GOL -->
+  <div class="modal-overlay" id="goalModal">
+    <div class="modal-box">
+      <div class="modal-title" id="modalGoalTitle">⚽ PILIH PENCETAK GOL</div>
+      <div class="modal-player-grid" id="modalPlayerList"></div>
+      <button class="btn-main btn-danger" style="padding: 8px 15px; font-size: 0.9rem;" onclick="closeGoalModal()">Batal</button>
+    </div>
+  </div>
+
+
+  <script>
+    let playersDB = [];
+    let capturedPhotoData = "";
+    let editingPlayerId = null;
+
+    let matchTimerInterval = null;
+    let remainingSeconds = 0;
+    let isTimerRunning = false;
+    const goalTimers = { score1: null, score2: null };
+    let currentGoalScoreId = null;
+
+    // --- DYNAMIC TOURNAMENT STRUCTURE ---
+    let totalTeams = 8;
+    let tournamentRounds = []; // Menyimpan struktur babak secara dinamis
+    let activeMatchCoord = null; // { roundIndex, matchIndex }
+
+    // --- AUDIO SYSTEM LOGIC ---
+    const bgMusic = document.getElementById('bgMusic');
+    const musicToggleBtn = document.getElementById('musicToggleBtn');
+    let isAudioEnabled = false;
+    let isMutedManually = false;
+
+    function enableAudioOnUserInteraction() {
+      if (!isAudioEnabled) {
+        isAudioEnabled = true;
+        bgMusic.volume = 0.5;
+        if (!document.getElementById('screen-scoreboard').classList.contains('active') && !isMutedManually) {
+          bgMusic.play().catch(() => {});
+        }
+      }
+    }
+
+    function toggleMusic(e) {
+      e.stopPropagation();
+      if (bgMusic.paused) {
+        bgMusic.play();
+        isMutedManually = false;
+        musicToggleBtn.innerText = "🔊";
+      } else {
+        bgMusic.pause();
+        isMutedManually = true;
+        musicToggleBtn.innerText = "🔇";
+      }
+    }
+
+    function playBgMusic() {
+      if (isAudioEnabled && !isMutedManually) bgMusic.play().catch(() => {});
+    }
+
+    function stopBgMusic() {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    }
+
+    function playGoalSound3Sec() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'square';
+        osc1.frequency.setValueAtTime(350, ctx.currentTime);
+        osc2.frequency.setValueAtTime(700, ctx.currentTime);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.0);
+
+        osc1.start(ctx.currentTime);
+        osc2.start(ctx.currentTime);
+        osc1.stop(ctx.currentTime + 3.0);
+        osc2.stop(ctx.currentTime + 3.0);
+      } catch (e) {}
+    }
+
+    // --- SETTING & DINAMIS INPUT TIM ---
+    function renderTeamInputs() {
+      totalTeams = parseInt(document.getElementById('selectTeamCount').value);
+      const container = document.getElementById('teamsInputContainer');
+      const teamSelect = document.getElementById('playerTeamSelect');
+      
+      container.innerHTML = "";
+      teamSelect.innerHTML = "";
+
+      for(let i = 1; i <= totalTeams; i++) {
+        const teamName = `RT 0${i}`;
+        // Inputs
+        const input = document.createElement('input');
+        input.type = "text";
+        input.id = `teamInput_${i}`;
+        input.value = teamName;
+        input.placeholder = `Tim ${i}`;
+        container.appendChild(input);
+
+        // Options for player registration
+        const option = document.createElement('option');
+        option.value = teamName;
+        option.innerText = teamName;
+        teamSelect.appendChild(option);
+      }
+    }
+
+    function updatePlayerTeamSelectOptions() {
+      const teamSelect = document.getElementById('playerTeamSelect');
+      teamSelect.innerHTML = "";
+      for(let i = 1; i <= totalTeams; i++) {
+        const val = document.getElementById(`teamInput_${i}`).value || `Tim ${i}`;
+        const option = document.createElement('option');
+        option.value = val;
+        option.innerText = val;
+        teamSelect.appendChild(option);
+      }
+    }
+
+    // --- SCREEN NAVIGATION ---
+    function switchScreen(screenId) {
+      document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+
+      if(screenId === 'screen-setting') { startCamera(); playBgMusic(); }
+      else if(screenId === 'screen-lineup' || screenId === 'screen-bracket') { stopCamera(); playBgMusic(); }
+      else if(screenId === 'screen-scoreboard') { stopCamera(); stopBgMusic(); }
+    }
+
+    // --- CAMERA SYSTEM ---
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+    const photoPreview = document.getElementById('photoPreview');
+
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+        .then(stream => { video.srcObject = stream; video.style.display = 'block'; photoPreview.style.display = 'none'; })
+        .catch(err => console.log("Kamera tidak aktif: " + err));
+    }
+
+    function stopCamera() {
+      if (video.srcObject) video.srcObject.getTracks().forEach(track => track.stop());
+    }
+
+    function takeSnapshot() {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth || 320;
+      canvas.height = video.videoHeight || 240;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      capturedPhotoData = canvas.toDataURL('image/png');
+      photoPreview.src = capturedPhotoData;
+      photoPreview.style.display = 'block';
+      video.style.display = 'none';
+    }
+
+    function resetCameraView() {
+      capturedPhotoData = "";
+      photoPreview.style.display = 'none';
+      video.style.display = 'block';
+    }
+
+    function addOrUpdatePlayer() {
+      const team = document.getElementById('playerTeamSelect').value;
+      const name = document.getElementById('inputPlayerName').value.trim();
+      const no = document.getElementById('inputPlayerNo').value.trim();
+
+      if(!name) { alert("⚠️ Nama pemain wajib diisi!"); return; }
+      if(!capturedPhotoData) { alert("⚠️ Foto pemain WAJIB diambil!"); return; }
+
+      if(editingPlayerId !== null) {
+        const index = playersDB.findIndex(p => p.id === editingPlayerId);
+        if(index !== -1) {
+          playersDB[index].team = team;
+          playersDB[index].name = name;
+          playersDB[index].no = no || "-";
+          playersDB[index].photo = capturedPhotoData;
+        }
+        editingPlayerId = null;
+        document.getElementById('btnSavePlayer').innerText = "💾 Simpan Pemain";
+      } else {
+        playersDB.push({ id: Date.now(), team, name, no: no || "-", photo: capturedPhotoData });
+      }
+
+      renderPlayerTable();
+      resetPlayerForm();
+    }
+
+    function editPlayer(id) {
+      const player = playersDB.find(p => p.id === id);
+      if(!player) return;
+      editingPlayerId = player.id;
+      document.getElementById('playerTeamSelect').value = player.team;
+      document.getElementById('inputPlayerName').value = player.name;
+      document.getElementById('inputPlayerNo').value = player.no;
+      capturedPhotoData = player.photo;
+      photoPreview.src = capturedPhotoData;
+      photoPreview.style.display = 'block';
+      video.style.display = 'none';
+      document.getElementById('btnSavePlayer').innerText = "🔄 Perbarui Data Pemain";
+    }
+
+    function deletePlayer(id) {
+      if(confirm("Hapus pemain ini?")) {
+        playersDB = playersDB.filter(p => p.id !== id);
+        renderPlayerTable();
+        if(editingPlayerId === id) resetPlayerForm();
+      }
+    }
+
+    function resetPlayerForm() {
+      document.getElementById('inputPlayerName').value = "";
+      document.getElementById('inputPlayerNo').value = "";
+      editingPlayerId = null;
+      document.getElementById('btnSavePlayer').innerText = "💾 Simpan Pemain";
+      resetCameraView();
+    }
+
+    function renderPlayerTable() {
+      const tbody = document.getElementById('playerTableBody');
+      tbody.innerHTML = "";
+      playersDB.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img src="${p.photo}" style="width:30px; height:35px; border-radius:4px; object-fit:cover;"></td>
+          <td><strong>${p.team}</strong></td>
+          <td>#${p.no}</td>
+          <td>${p.name}</td>
+          <td>
+            <button class="btn-action edit" onclick="editPlayer(${p.id})">✏️ Edit</button>
+            <button class="btn-action delete" onclick="deletePlayer(${p.id})">🗑️ Hapus</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- DYNAMIC TOURNAMENT BRACKET LOGIC ---
+    function initTournamentAndGoToBracket() {
+      updatePlayerTeamSelectOptions();
+      tournamentRounds = [];
+
+      let round1Matches = [];
+      let matchCount = totalTeams / 2;
+
+      let roundTitle = matchCount === 8 ? "BABAK 16 BESAR" : (matchCount === 4 ? "PEREMPAT FINAL" : "SEMI FINAL");
+
+      for(let i = 0; i < matchCount; i++) {
+        let t1 = document.getElementById(`teamInput_${(i*2)+1}`).value || `Tim ${(i*2)+1}`;
+        let t2 = document.getElementById(`teamInput_${(i*2)+2}`).value || `Tim ${(i*2)+2}`;
+        round1Matches.push({ team1: t1, team2: t2, score1: 0, score2: 0, winner: "", done: false });
+      }
+
+      tournamentRounds.push({ title: roundTitle, matches: round1Matches });
+
+      // Generate Next Rounds
+      while(matchCount > 1) {
+        matchCount = matchCount / 2;
+        let title = matchCount === 4 ? "PEREMPAT FINAL" : (matchCount === 2 ? "SEMI FINAL" : "GRAND FINAL");
+        let nextMatches = [];
+        for(let i = 0; i < matchCount; i++) {
+          nextMatches.push({ team1: "TBD", team2: "TBD", score1: 0, score2: 0, winner: "", done: false });
+        }
+        tournamentRounds.push({ title: title, matches: nextMatches });
+      }
+
+      renderDynamicBracketView();
+      switchScreen('screen-bracket');
+    }
+
+    function renderDynamicBracketView() {
+      const board = document.getElementById('dynamicBracketBoard');
+      board.innerHTML = "";
+
+      tournamentRounds.forEach((round, rIndex) => {
+        const col = document.createElement('div');
+        col.className = "bracket-column";
+
+        const titleDiv = document.createElement('div');
+        titleDiv.style.cssText = "font-size:0.8rem; color:#00ffcc; text-align:center; font-weight:bold;";
+        titleDiv.innerText = round.title;
+        col.appendChild(titleDiv);
+
+        round.matches.forEach((m, mIndex) => {
+          const matchBox = document.createElement('div');
+          matchBox.className = "bracket-match";
+
+          // Status tombol
+          let canPlay = true;
+          if(m.team1 === "TBD" || m.team2 === "TBD" || m.done) canPlay = false;
+
+          let t1Class = m.done ? (m.winner === m.team1 ? 'winner' : 'loser') : '';
+          let t2Class = m.done ? (m.winner === m.team2 ? 'winner' : 'loser') : '';
+
+          matchBox.innerHTML = `
+            <div class="bracket-team ${t1Class}"><span>${m.team1}</span><span>${m.done ? m.score1 : '-'}</span></div>
+            <div class="bracket-team ${t2Class}"><span>${m.team2}</span><span>${m.done ? m.score2 : '-'}</span></div>
+            <button class="btn-main" style="width:100%; padding:3px; font-size:0.75rem; margin-top:5px;" 
+                    ${canPlay ? '' : 'disabled'} onclick="prepareDynamicMatch(${rIndex}, ${mIndex})">
+              ${m.done ? '✔ Selesai' : '▶️ Mainkan'}
+            </button>
+          `;
+          col.appendChild(matchBox);
+        });
+
+        board.appendChild(col);
+      });
+
+      // Trophy Container untuk Juara Utama
+      const finalRound = tournamentRounds[tournamentRounds.length - 1];
+      const finalMatch = finalRound.matches[0];
+
+      const trophyCol = document.createElement('div');
+      trophyCol.className = "bracket-column trophy-container";
+      trophyCol.innerHTML = `
+        <div class="trophy-icon">🏆</div>
+        <div style="color: #ffeb3b; font-weight: bold; margin-top: 5px; font-size: 1rem;">JUARA UTAMA</div>
+        <div style="color: #00ffcc; font-size: 1.3rem; font-weight: 900; margin-top: 5px; text-shadow: 0 0 10px #00ffcc;">
+          ${finalMatch.done ? finalMatch.winner : '-'}
+        </div>
+      `;
+      board.appendChild(trophyCol);
+    }
+
+    function prepareDynamicMatch(rIndex, mIndex) {
+      activeMatchCoord = { rIndex, mIndex };
+      const match = tournamentRounds[rIndex].matches[mIndex];
+
+      document.getElementById('lineupTitleA').innerText = match.team1;
+      document.getElementById('lineupTitleB').innerText = match.team2;
+      document.getElementById('lineupSubMatchTitle').innerText = `${tournamentRounds[rIndex].title} - MATCH ${mIndex + 1}`;
+
+      const gridA = document.getElementById('lineupGridA');
+      const gridB = document.getElementById('lineupGridB');
+      gridA.innerHTML = ""; gridB.innerHTML = "";
+
+      playersDB.forEach(p => {
+        if(p.team === match.team1 || p.team === match.team2) {
+          const card = document.createElement('div');
+          card.className = "player-card";
+          card.innerHTML = `<img src="${p.photo}"><div class="player-card-name">${p.name}</div><div class="player-card-no">#${p.no}</div>`;
+          if(p.team === match.team1) gridA.appendChild(card);
+          else gridB.appendChild(card);
+        }
+      });
+
+      switchScreen('screen-lineup');
+    }
+
+    function startMatch() {
+      const { rIndex, mIndex } = activeMatchCoord;
+      const match = tournamentRounds[rIndex].matches[mIndex];
+      const durationMin = parseInt(document.getElementById('inputMatchDuration').value) || 10;
+
+      document.getElementById('matchTeamDisplay').innerText = `${match.team1} VS ${match.team2}`;
+      document.getElementById('badgeA').innerText = match.team1.substring(0,2);
+      document.getElementById('badgeB').innerText = match.team2.substring(0,2);
+
+      remainingSeconds = durationMin * 60;
+      updateTimerDisplay();
+
+      document.getElementById('score1').innerText = "0";
+      document.getElementById('score2').innerText = "0";
+      document.getElementById('goalListA').innerHTML = "";
+      document.getElementById('goalListB').innerHTML = "";
+
+      switchScreen('screen-scoreboard');
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(remainingSeconds / 60);
+      const s = remainingSeconds % 60;
+      document.getElementById('timer-display').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('start-stop-btn');
+      if (!isTimerRunning) {
+        if(remainingSeconds <= 0) return;
+        isTimerRunning = true; 
+        btn.innerText = "Jeda";
+        matchTimerInterval = setInterval(() => {
+          remainingSeconds--;
+          updateTimerDisplay();
+          if(remainingSeconds <= 0) {
+            clearInterval(matchTimerInterval);
+            isTimerRunning = false;
+            btn.innerText = "Selesai";
+            alert("Waktu Pertandingan Habis!");
+          }
+        }, 1000);
+      } else {
+        isTimerRunning = false; 
+        btn.innerText = "Lanjut";
+        clearInterval(matchTimerInterval);
+      }
+    }
+
+    function changeScore(elementId, delta) {
+      const scoreElement = document.getElementById(elementId);
+      let currentScore = parseInt(scoreElement.innerText);
+      currentScore += delta;
+      if (currentScore < 0) currentScore = 0;
+      scoreElement.innerText = currentScore;
+
+      if (delta > 0) {
+        playGoalSound3Sec();
+        triggerGoalAnimation(elementId, document.getElementById(`${elementId}-box`));
+        openGoalModal(elementId);
+      }
+    }
+
+    function triggerGoalAnimation(elementId, boxElement) {
+      if (goalTimers[elementId]) clearTimeout(goalTimers[elementId]);
+      boxElement.classList.add('is-goal');
+      goalTimers[elementId] = setTimeout(() => boxElement.classList.remove('is-goal'), 3000);
+    }
+
+    function openGoalModal(scoreId) {
+      currentGoalScoreId = scoreId;
+      const { rIndex, mIndex } = activeMatchCoord;
+      const match = tournamentRounds[rIndex].matches[mIndex];
+
+      const targetTeamName = scoreId === 'score1' ? match.team1 : match.team2;
+      const teamPlayers = playersDB.filter(p => p.team === targetTeamName);
+      
+      document.getElementById('modalGoalTitle').innerText = `⚽ PILIH PENCETAK GOL (${targetTeamName})`;
+      const grid = document.getElementById('modalPlayerList');
+      grid.innerHTML = "";
+
+      if(teamPlayers.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; color: #ff9999;">Tidak ada data pemain terdaftar di tim ${targetTeamName}.</p>`;
+      } else {
+        teamPlayers.forEach(p => {
+          const btn = document.createElement('div');
+          btn.className = "btn-select-player";
+          btn.onclick = () => selectScorer(`#${p.no} ${p.name}`);
+          btn.innerHTML = `<img src="${p.photo}"><div class="p-name">${p.name}</div><div class="p-no">#${p.no}</div>`;
+          grid.appendChild(btn);
+        });
+      }
+
+      const btnOwnGoal = document.createElement('div');
+      btnOwnGoal.className = "btn-select-player";
+      btnOwnGoal.style.borderColor = "#f39c12";
+      btnOwnGoal.onclick = () => selectScorer("Lainnya/Gol Sendiri");
+      btnOwnGoal.innerHTML = `<div style="font-size:1.8rem;">⚽</div><div class="p-name">Lainnya</div>`;
+      grid.appendChild(btnOwnGoal);
+
+      document.getElementById('goalModal').classList.add('active');
+    }
+
+    function selectScorer(scorerName) {
+      if(currentGoalScoreId && scorerName) {
+        const targetList = currentGoalScoreId === 'score1' ? document.getElementById('goalListA') : document.getElementById('goalListB');
+        const li = document.createElement('li');
+        const totalSec = parseInt(document.getElementById('inputMatchDuration').value) * 60;
+        const minutes = Math.floor((totalSec - remainingSeconds) / 60);
+        li.innerHTML = `⚽ <strong>${scorerName}</strong> (${minutes}')`;
+        targetList.appendChild(li);
+      }
+      closeGoalModal();
+    }
+
+    function closeGoalModal() {
+      document.getElementById('goalModal').classList.remove('active');
+      currentGoalScoreId = null;
+    }
+
+    function finishMatch() {
+      const s1 = parseInt(document.getElementById('score1').innerText);
+      const s2 = parseInt(document.getElementById('score2').innerText);
+
+      if(s1 === s2) {
+        alert("⚠️ Hasil pertandingan Seri! Silakan selesaikan via adu penalti lalu sesuaikan skor hingga ada pemenang.");
+        return;
+      }
+
+      if(confirm("Apakah Anda yakin pertandingan telah selesai? Hasil akan di-update ke Diagram Turnamen 3D.")) {
+        clearInterval(matchTimerInterval);
+        isTimerRunning = false;
+        document.getElementById('start-stop-btn').innerText = "Mulai";
+
+        const { rIndex, mIndex } = activeMatchCoord;
+        const match = tournamentRounds[rIndex].matches[mIndex];
+
+        match.score1 = s1;
+        match.score2 = s2;
+        match.winner = s1 > s2 ? match.team1 : match.team2;
+        match.done = true;
+
+        // TERUSKAN PEMENANG KE BABAK SELANJUTNYA (JIKA ADA)
+        if(rIndex + 1 < tournamentRounds.length) {
+          const nextRound = tournamentRounds[rIndex + 1];
+          const nextMatchIndex = Math.floor(mIndex / 2);
+          if(mIndex % 2 === 0) {
+            nextRound.matches[nextMatchIndex].team1 = match.winner;
+          } else {
+            nextRound.matches[nextMatchIndex].team2 = match.winner;
+          }
+        }
+
+        renderDynamicBracketView();
+        switchScreen('screen-bracket');
+      }
+    }
+
+    function resetTournamentAndGoSetting() {
+      if(confirm("Apakah Anda yakin ingin melakukan Reset Turnamen & kembali ke Menu Setting?")) {
+        switchScreen('screen-setting');
+      }
+    }
+
+    // Initial load
+    renderTeamInputs();
+    startCamera();
+  </script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker PWA Aktif!', reg))
+          .catch(err => console.error('Gagal daftar Service Worker:', err));
+      });
+    }
+  </script>
+</body>
+</html>
