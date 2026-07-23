@@ -526,7 +526,7 @@
       display: flex;
       justify-content: space-between;
       padding: 4px 8px;
-      background: #081124;
+     po background: #081124;
       border-radius: 5px;
       margin: 3px 0;
       font-size: 0.8rem;
@@ -642,7 +642,9 @@
 <body onclick="enableAudioOnUserInteraction()">
 
   <!-- BACKSOUND AUDIO TAG: Mengarah ke folder backsound/wavin.mp3 -->
-  <audio id="bgMusic" loop src="backsound/wavin.mp3"></audio>
+  <audio id="bgMusic" loop preload="auto">
+  <source src="backsound/wavin.mp3" type="audio/mpeg">
+</audio>
 
   <button class="music-control-btn" id="musicToggleBtn" onclick="toggleMusic(event)" title="Mute/Unmute Backsound">🔊</button>
 
@@ -855,14 +857,18 @@
     let isMutedManually = false;
 
     function enableAudioOnUserInteraction() {
-      if (!isAudioEnabled) {
+  if (!isAudioEnabled) {
+    bgMusic.volume = 0.5;
+    if (!document.getElementById('screen-scoreboard').classList.contains('active') && !isMutedManually) {
+      bgMusic.play().then(() => {
         isAudioEnabled = true;
-        bgMusic.volume = 0.5;
-        if (!document.getElementById('screen-scoreboard').classList.contains('active') && !isMutedManually) {
-          bgMusic.play().catch(() => {});
-        }
-      }
+        musicToggleBtn.innerText = "🔊";
+      }).catch(err => {
+        console.log("Menunggu interaksi klik pengguna untuk audio:", err);
+      });
     }
+  }
+}
 
     function toggleMusic(e) {
       e.stopPropagation();
