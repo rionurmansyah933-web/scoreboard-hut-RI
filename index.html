@@ -29,13 +29,14 @@
     }
 
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 70px 10px 15px 10px; /* Space untuk Navbar Atas */
-      position: relative;
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Mengubah flex-start ke center agar konten ke tengah vertikal */
+  min-height: 100vh;       /* Memastikan tinggi body memenuhi 100% layar HP */
+  padding: 80px 10px 20px 10px; /* Tetap memberi ruang untuk Navbar fixed di atas */
+  position: relative;
+}
 
     body::before {
       content: "";
@@ -144,14 +145,16 @@
     .btn-action.delete { background: #e74c3c; border-color: #c0392b; }
 
     /* SCREEN 1: SETTING */
-    .setting-card {
-      background: rgba(9, 23, 46, 0.95);
-      border: 3px solid #7899d0;
-      border-radius: 20px;
-      padding: 25px;
-      width: 100%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-    }
+.setting-card {
+  background: rgba(9, 23, 46, 0.95);
+  border: 3px solid #7899d0;
+  border-radius: 20px;
+  padding: 25px;
+  width: 100%;
+  max-width: 600px; /* Membatasi lebar agar rapi dan tidak terlalu melar */
+  margin: auto;     /* Mendorong otomatis ke tengah vertikal & horizontal */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+}
 
     .setting-title {
       color: #ffeb3b;
@@ -1127,21 +1130,25 @@
       resetPlayerForm();
     }
 
-    function editPlayer(id) {
+        function editPlayer(id) {
       const player = playersDB.find(p => p.id === id);
       if(!player) return;
+      
       editingPlayerId = player.id;
       document.getElementById('playerTeamSelect').value = player.team;
       document.getElementById('inputPlayerName').value = player.name;
       document.getElementById('inputPlayerNo').value = player.no;
       
+      // Load/Tampilkan foto yang sudah ada milik pemain ke preview
       uploadedPhotoData = player.photo;
       const photoPreview = document.getElementById('photoPreview');
       const photoPlaceholder = document.getElementById('photoPlaceholder');
+      
       photoPreview.src = uploadedPhotoData;
       photoPreview.style.display = 'block';
       photoPlaceholder.style.display = 'none';
 
+      // Ubah teks tombol simpan
       document.getElementById('btnSavePlayer').innerText = "🔄 Perbarui Data Pemain";
     }
 
@@ -1153,14 +1160,21 @@
       }
     }
 
-    function resetPlayerForm() {
+        function resetPlayerForm() {
       document.getElementById('inputPlayerName').value = "";
       document.getElementById('inputPlayerNo').value = "";
-      document.getElementById('fileInputPhoto').value = "";
-      uploadedPhotoData = "";
       
+      // Reset input file gallery/HP
+      const fileInput = document.getElementById('fileInputPhoto');
+      if (fileInput) fileInput.value = ""; 
+      
+      uploadedPhotoData = ""; // Kosongkan variabel penampung data foto
+      
+      // Sembunyikan elemen preview foto dan tampilkan kembali teks placeholder
       const photoPreview = document.getElementById('photoPreview');
       const photoPlaceholder = document.getElementById('photoPlaceholder');
+      
+      photoPreview.src = "";
       photoPreview.style.display = 'none';
       photoPlaceholder.style.display = 'block';
 
