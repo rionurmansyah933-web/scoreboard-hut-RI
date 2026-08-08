@@ -259,30 +259,30 @@
         </table>
       </div>
       <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
-  <button class="btn-main btn-warning" style="flex:1; min-width: 250px;" onclick="initTournamentAndGoToBracket()">🏆 Tampilkan Diagram Turnamen ➔</button>
-  <button class="btn-main btn-danger" onclick="clearAllSavedData()">🗑️ Hapus Semua Data</button>
-</div>
+        <button class="btn-main btn-warning" style="flex:1; min-width: 250px;" onclick="initTournamentAndGoToBracket()">🏆 Tampilkan Diagram Turnamen ➔</button>
+        <button class="btn-main btn-danger" onclick="clearAllSavedData()">🗑️ Hapus Semua Data</button>
+      </div>
 
-<!-- 🆕 BAGIAN BACKUP & RESTORE -->
-<div style="background: rgba(155,89,182,0.15); border: 2px solid #9b59b6; border-radius: 15px; padding: 20px; margin-top: 20px;">
-  <h3 style="color: #e0a9ff; margin-bottom: 15px; text-align: center;">💾 Backup & Restore Data</h3>
-  <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-    <button class="btn-main" style="background: linear-gradient(180deg, #9b59b6 0%, #8e44ad 100%); border-color: #e0a9ff;" onclick="exportAllData()">
-      📥 Download Backup Lengkap
-    </button>
-    <button class="btn-main" style="background: linear-gradient(180deg, #3498db 0%, #2980b9 100%); border-color: #85c1e9;" onclick="importData()">
-      📤 Restore dari File Backup
-    </button>
-    <button class="btn-main" style="background: linear-gradient(180deg, #1abc9c 0%, #16a085 100%); border-color: #76d7c4;" onclick="exportMatchHistoryOnly()">
-      📊 Download Rekap Pertandingan
-    </button>
+      <!-- 🆕 BAGIAN BACKUP & RESTORE -->
+      <div style="background: rgba(155,89,182,0.15); border: 2px solid #9b59b6; border-radius: 15px; padding: 20px; margin-top: 20px;">
+        <h3 style="color: #e0a9ff; margin-bottom: 15px; text-align: center;">💾 Backup & Restore Data</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+          <button class="btn-main" style="background: linear-gradient(180deg, #9b59b6 0%, #8e44ad 100%); border-color: #e0a9ff;" onclick="exportAllData()">
+            📥 Download Backup Lengkap
+          </button>
+          <button class="btn-main" style="background: linear-gradient(180deg, #3498db 0%, #2980b9 100%); border-color: #85c1e9;" onclick="importData()">
+            📤 Restore dari File Backup
+          </button>
+          <button class="btn-main" style="background: linear-gradient(180deg, #1abc9c 0%, #16a085 100%); border-color: #76d7c4;" onclick="exportMatchHistoryOnly()">
+            📊 Download Rekap Pertandingan
+          </button>
+        </div>
+        <p style="color: #a8c4f0; font-size: 0.85rem; text-align: center; margin-top: 10px;">
+          💡 Simpan file backup di tempat aman (Google Drive, WhatsApp, dll). Gunakan "Restore" jika data hilang.
+        </p>
+      </div>
+    </div>
   </div>
-      <p style="color: #a8c4f0; font-size: 0.85rem; text-align: center; margin-top: 10px;">
-    💡 Simpan file backup di tempat aman (Google Drive, WhatsApp, dll). Gunakan "Restore" jika data hilang.
-  </p>
-</div>
-</div>
-</div>
 
   <!-- SCREEN 2: LINE-UP -->
   <div id="screen-lineup" class="app-screen">
@@ -359,6 +359,14 @@
   <div id="screen-bracket" class="app-screen">
     <h1 style="color: #ffeb3b; text-align: center; font-size: 1.8rem; margin-bottom: 5px;">🏆 DIAGRAM TURNAMEN 3D</h1>
     <p style="color: #00ffcc; text-align: center; margin-bottom: 15px;">Klik "Mainkan" pada pertandingan yang aktif</p>
+    
+    <!-- 🆕 TOMBOL REFRESH BRACKET -->
+    <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap;">
+      <button class="btn-main btn-warning" style="padding: 8px 16px; font-size: 0.9rem;" onclick="refreshBracketFromSettings()">
+        🔄 Update Nama Tim dari Setting
+      </button>
+    </div>
+    
     <div class="bracket-container-3d"><div class="bracket-board" id="dynamicBracketBoard"></div></div>
     <div style="margin-top: 20px;"><button class="btn-main btn-danger" onclick="resetTournamentAndGoSetting()">⚙️ Reset Turnamen</button></div>
   </div>
@@ -375,11 +383,11 @@
       <div id="matchHistoryList"><p style="color: #7f8c8d;">Belum ada pertandingan selesai.</p></div>
     </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-  <button class="btn-main" onclick="switchScreen('screen-bracket')">⬅️ Kembali ke Diagram</button>
-  <button class="btn-main" style="background: linear-gradient(180deg, #1abc9c 0%, #16a085 100%); border-color: #76d7c4;" onclick="exportMatchHistoryOnly()">
-    📊 Download Rekap Ini
-  </button>
-</div>
+      <button class="btn-main" onclick="switchScreen('screen-bracket')">⬅️ Kembali ke Diagram</button>
+      <button class="btn-main" style="background: linear-gradient(180deg, #1abc9c 0%, #16a085 100%); border-color: #76d7c4;" onclick="exportMatchHistoryOnly()">
+        📊 Download Rekap Ini
+      </button>
+    </div>
   </div>
 
   <!-- MODAL: PILIH PENCETAK GOL -->
@@ -510,194 +518,182 @@
         location.reload();
       }
     }
-      // ============================================
-// 🆕 FITUR EXPORT / IMPORT BACKUP DATA
-// ============================================
 
-// Download SEMUA data sebagai file JSON
-function exportAllData() {
-  const backupData = {
-    version: "2.0",
-    appName: "Turnamen HUT RI 81 - Scoreboard",
-    exportDate: new Date().toLocaleString('id-ID'),
-    data: {
-      players: playersDB,
-      bracket: tournamentRounds,
-      matchHistory: matchHistory,
-      totalTeams: totalTeams,
-      duration: document.getElementById('inputMatchDuration').value,
-      teamNames: []
-    }
-  };
+    // ============================================
+    // 🆕 FITUR EXPORT / IMPORT BACKUP DATA
+    // ============================================
 
-  // Ambil nama tim dari input
-  for(let i = 1; i <= totalTeams; i++) {
-    const el = document.getElementById(`teamInput_${i}`);
-    backupData.data.teamNames.push(el ? el.value : '');
-  }
-
-  downloadJSON(backupData, `backup_turnamen_hut81_${getTodayString()}.json`);
-  alert("✅ Backup LENGKAP berhasil didownload!\n\nSimpan file ini di tempat aman (Google Drive, WhatsApp, dll).");
-}
-
-// Download HANYA rekap pertandingan
-function exportMatchHistoryOnly() {
-  if (matchHistory.length === 0) {
-    alert("⚠️ Belum ada pertandingan yang selesai!");
-    return;
-  }
-
-  // Buat teks rekap yang mudah dibaca
-  let textReport = "========================================\n";
-  textReport += "   REKAP TURNAMEN HUT RI KE-81 RW.01\n";
-  textReport += "   Export: " + new Date().toLocaleString('id-ID') + "\n";
-  textReport += "========================================\n\n";
-
-  // Top Scorer
-  textReport += "👑 TOP SCORER:\n";
-  textReport += "----------------------------------------\n";
-  const scorerStats = {};
-  playersDB.forEach(p => {
-    if((p.goals || 0) > 0) scorerStats[p.id] = { name: p.name, team: p.team, goals: p.goals };
-  });
-  const sortedScorers = Object.values(scorerStats).sort((a,b) => b.goals - a.goals);
-  if (sortedScorers.length > 0) {
-    sortedScorers.forEach((s, i) => {
-      textReport += `${i+1}. ${s.name} (${s.team}) - ${s.goals} gol\n`;
-    });
-  } else {
-    textReport += "Belum ada data gol.\n";
-  }
-
-  textReport += "\n\n📜 RIWAYAT PERTANDINGAN:\n";
-  textReport += "----------------------------------------\n";
-  matchHistory.forEach((m, i) => {
-    textReport += `\n[Pertandingan ${i+1}] - ${m.round}\n`;
-    textReport += `${m.team1} ${m.score1} - ${m.score2} ${m.team2}\n`;
-    textReport += `Pemenang: ${m.winner}${m.isPenalty ? ' (via Adu Penalti)' : ''}\n`;
-    if (m.scorers.length > 0) {
-      textReport += `Pencetak Gol: ${m.scorers.map(s => s.name).join(', ')}\n`;
-    }
-    if (m.cards.length > 0) {
-      textReport += `Kartu: ${m.cards.map(c => `${c.name} (${c.type === 'yellow' ? '🟨' : '🟥'})`).join(', ')}\n`;
-    }
-    textReport += `Waktu: ${m.timestamp}\n`;
-  });
-
-  textReport += "\n========================================\n";
-  textReport += "   Generated by Scoreboard HUT RI 81\n";
-  textReport += "========================================\n";
-
-  // Download sebagai file teks
-  const blob = new Blob([textReport], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `rekap_turnamen_hut81_${getTodayString()}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  // Juga download versi JSON untuk backup
-  const jsonData = {
-    type: "MATCH_HISTORY",
-    exportDate: new Date().toISOString(),
-    data: matchHistory
-  };
-  downloadJSON(jsonData, `rekap_json_hut81_${getTodayString()}.json`);
-
-  alert("✅ Rekap berhasil didownload!\n\n📄 File .txt = untuk dibaca\n📄 File .json = untuk backup/restore");
-}
-
-// Restore dari file backup JSON
-function importData() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      try {
-        const backup = JSON.parse(ev.target.result);
-
-        // Validasi format backup
-        if (!backup.data || !backup.data.players) {
-          alert("❌ File backup tidak valid!\nPastikan Anda memilih file backup dari aplikasi ini.");
-          return;
+    function exportAllData() {
+      const backupData = {
+        version: "2.0",
+        appName: "Turnamen HUT RI 81 - Scoreboard",
+        exportDate: new Date().toLocaleString('id-ID'),
+        data: {
+          players: playersDB,
+          bracket: tournamentRounds,
+          matchHistory: matchHistory,
+          totalTeams: totalTeams,
+          duration: document.getElementById('inputMatchDuration').value,
+          teamNames: []
         }
+      };
 
-        const confirmMsg = `⚠️ PERHATIAN!\n\n` +
-          `Import backup akan MENGGANTI semua data saat ini.\n\n` +
-          `📅 Backup dari: ${backup.exportDate || 'Tidak diketahui'}\n` +
-          `👥 Jumlah pemain: ${backup.data.players.length}\n` +
-          `🏆 Jumlah babak: ${backup.data.bracket ? backup.data.bracket.length : 0}\n` +
-          `📜 Jumlah pertandingan: ${backup.data.matchHistory ? backup.data.matchHistory.length : 0}\n\n` +
-          `Lanjutkan import?`;
-
-        if (confirm(confirmMsg)) {
-          // Restore semua data
-          playersDB = backup.data.players || [];
-          tournamentRounds = backup.data.bracket || [];
-          matchHistory = backup.data.matchHistory || [];
-          totalTeams = backup.data.totalTeams || 8;
-
-          document.getElementById('selectTeamCount').value = totalTeams;
-          document.getElementById('inputMatchDuration').value = backup.data.duration || 10;
-
-          renderTeamInputs();
-
-          // Restore nama tim
-          if (backup.data.teamNames && backup.data.teamNames.length > 0) {
-            backup.data.teamNames.forEach((name, i) => {
-              const el = document.getElementById(`teamInput_${i + 1}`);
-              if (el && name) el.value = name;
-            });
-          }
-
-          updatePlayerTeamSelectOptions();
-          renderPlayerTable();
-
-          if (tournamentRounds.length > 0) renderDynamicBracketView();
-          renderHistoryScreen();
-          saveState();
-
-          alert("✅ Data berhasil di-restore dari backup!\n\n" +
-            `👥 ${playersDB.length} pemain dimuat\n` +
-            `🏆 ${tournamentRounds.length} babak dimuat\n` +
-            `📜 ${matchHistory.length} pertandingan dimuat`);
-        }
-      } catch(err) {
-        alert("❌ Gagal membaca file backup!\n\nPastikan file yang dipilih adalah file backup valid (.json) dari aplikasi ini.");
-        console.error("Import error:", err);
+      for(let i = 1; i <= totalTeams; i++) {
+        const el = document.getElementById(`teamInput_${i}`);
+        backupData.data.teamNames.push(el ? el.value : '');
       }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
 
-// Helper: Download JSON
-function downloadJSON(data, filename) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+      downloadJSON(backupData, `backup_turnamen_hut81_${getTodayString()}.json`);
+      alert("✅ Backup LENGKAP berhasil didownload!\n\nSimpan file ini di tempat aman (Google Drive, WhatsApp, dll).");
+    }
 
-// Helper: Format tanggal untuk nama file
-function getTodayString() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-}
+    function exportMatchHistoryOnly() {
+      if (matchHistory.length === 0) {
+        alert("⚠️ Belum ada pertandingan yang selesai!");
+        return;
+      }
+
+      let textReport = "========================================\n";
+      textReport += "   REKAP TURNAMEN HUT RI KE-81 RW.01\n";
+      textReport += "   Export: " + new Date().toLocaleString('id-ID') + "\n";
+      textReport += "========================================\n\n";
+
+      textReport += "👑 TOP SCORER:\n";
+      textReport += "----------------------------------------\n";
+      const scorerStats = {};
+      playersDB.forEach(p => {
+        if((p.goals || 0) > 0) scorerStats[p.id] = { name: p.name, team: p.team, goals: p.goals };
+      });
+      const sortedScorers = Object.values(scorerStats).sort((a,b) => b.goals - a.goals);
+      if (sortedScorers.length > 0) {
+        sortedScorers.forEach((s, i) => {
+          textReport += `${i+1}. ${s.name} (${s.team}) - ${s.goals} gol\n`;
+        });
+      } else {
+        textReport += "Belum ada data gol.\n";
+      }
+
+      textReport += "\n\n📜 RIWAYAT PERTANDINGAN:\n";
+      textReport += "----------------------------------------\n";
+      matchHistory.forEach((m, i) => {
+        textReport += `\n[Pertandingan ${i+1}] - ${m.round}\n`;
+        textReport += `${m.team1} ${m.score1} - ${m.score2} ${m.team2}\n`;
+        textReport += `Pemenang: ${m.winner}${m.isPenalty ? ' (via Adu Penalti)' : ''}\n`;
+        if (m.scorers.length > 0) {
+          textReport += `Pencetak Gol: ${m.scorers.map(s => s.name).join(', ')}\n`;
+        }
+        if (m.cards.length > 0) {
+          textReport += `Kartu: ${m.cards.map(c => `${c.name} (${c.type === 'yellow' ? '🟨' : '🟥'})`).join(', ')}\n`;
+        }
+        textReport += `Waktu: ${m.timestamp}\n`;
+      });
+
+      textReport += "\n========================================\n";
+      textReport += "   Generated by Scoreboard HUT RI 81\n";
+      textReport += "========================================\n";
+
+      const blob = new Blob([textReport], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `rekap_turnamen_hut81_${getTodayString()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      const jsonData = {
+        type: "MATCH_HISTORY",
+        exportDate: new Date().toISOString(),
+        data: matchHistory
+      };
+      downloadJSON(jsonData, `rekap_json_hut81_${getTodayString()}.json`);
+
+      alert("✅ Rekap berhasil didownload!\n\n📄 File .txt = untuk dibaca\n📄 File .json = untuk backup/restore");
+    }
+
+    function importData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            const backup = JSON.parse(ev.target.result);
+
+            if (!backup.data || !backup.data.players) {
+              alert("❌ File backup tidak valid!\nPastikan Anda memilih file backup dari aplikasi ini.");
+              return;
+            }
+
+            const confirmMsg = `⚠️ PERHATIAN!\n\n` +
+              `Import backup akan MENGGANTI semua data saat ini.\n\n` +
+              `📅 Backup dari: ${backup.exportDate || 'Tidak diketahui'}\n` +
+              `👥 Jumlah pemain: ${backup.data.players.length}\n` +
+              `🏆 Jumlah babak: ${backup.data.bracket ? backup.data.bracket.length : 0}\n` +
+              `📜 Jumlah pertandingan: ${backup.data.matchHistory ? backup.data.matchHistory.length : 0}\n\n` +
+              `Lanjutkan import?`;
+
+            if (confirm(confirmMsg)) {
+              playersDB = backup.data.players || [];
+              tournamentRounds = backup.data.bracket || [];
+              matchHistory = backup.data.matchHistory || [];
+              totalTeams = backup.data.totalTeams || 8;
+
+              document.getElementById('selectTeamCount').value = totalTeams;
+              document.getElementById('inputMatchDuration').value = backup.data.duration || 10;
+
+              renderTeamInputs();
+
+              if (backup.data.teamNames && backup.data.teamNames.length > 0) {
+                backup.data.teamNames.forEach((name, i) => {
+                  const el = document.getElementById(`teamInput_${i + 1}`);
+                  if (el && name) el.value = name;
+                });
+              }
+
+              updatePlayerTeamSelectOptions();
+              renderPlayerTable();
+
+              if (tournamentRounds.length > 0) renderDynamicBracketView();
+              renderHistoryScreen();
+              saveState();
+
+              alert("✅ Data berhasil di-restore dari backup!\n\n" +
+                `👥 ${playersDB.length} pemain dimuat\n` +
+                `🏆 ${tournamentRounds.length} babak dimuat\n` +
+                `📜 ${matchHistory.length} pertandingan dimuat`);
+            }
+          } catch(err) {
+            alert("❌ Gagal membaca file backup!\n\nPastikan file yang dipilih adalah file backup valid (.json) dari aplikasi ini.");
+            console.error("Import error:", err);
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    function downloadJSON(data, filename) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function getTodayString() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    }
 
     // ==================== KOMPRESI GAMBAR ====================
     function compressImage(base64, callback) {
@@ -763,7 +759,31 @@ function getTodayString() {
       document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
       document.getElementById('btnGlobalBack').style.display = screenId === 'screen-setting' ? 'none' : 'flex';
+      
       if(screenId === 'screen-history') renderHistoryScreen();
+      
+      // 🆕 Auto-refresh bracket saat masuk screen bracket (jika belum ada pertandingan)
+      if(screenId === 'screen-bracket' && tournamentRounds.length > 0) {
+        const hasStarted = tournamentRounds.some(round => 
+          round.matches.some(m => m.done)
+        );
+        
+        if (!hasStarted) {
+          const firstRound = tournamentRounds[0];
+          let updated = false;
+          firstRound.matches.forEach((match, i) => {
+            const t1 = document.getElementById(`teamInput_${(i*2)+1}`)?.value.trim();
+            const t2 = document.getElementById(`teamInput_${(i*2)+2}`)?.value.trim();
+            if (t1 && t1 !== match.team1) { match.team1 = t1; updated = true; }
+            if (t2 && t2 !== match.team2) { match.team2 = t2; updated = true; }
+          });
+          if (updated) {
+            renderDynamicBracketView();
+            saveState();
+          }
+        }
+      }
+      
       if(screenId === 'screen-scoreboard') stopBgMusic(); else playBgMusic();
     }
 
@@ -837,7 +857,7 @@ function getTodayString() {
         editingPlayerId = null;
         document.getElementById('btnSavePlayer').innerText = "💾 Simpan Pemain";
       } else {
-        playersDB.push({ id: Date.now(), team, name, no: no || "-", photo: uploadedPhotoData, yellowCards: 0, redCards: 0 });
+        playersDB.push({ id: Date.now(), team, name, no: no || "-", photo: uploadedPhotoData, yellowCards: 0, redCards: 0, goals: 0 });
       }
       renderPlayerTable(); resetPlayerForm(); saveState();
     }
@@ -884,24 +904,98 @@ function getTodayString() {
 
     // ==================== TURNAMEN & BRACKET ====================
     function initTournamentAndGoToBracket() {
+      // 🆕 Cek apakah bracket sudah ada
+      if (tournamentRounds.length > 0) {
+        const hasStarted = tournamentRounds.some(round => 
+          round.matches.some(m => m.done)
+        );
+        
+        if (hasStarted) {
+          if (!confirm("⚠️ PERHATIAN!\n\nTurnamen sudah berjalan (ada pertandingan yang selesai).\nMembuat bracket baru akan MENGHAPUS semua progres!\n\nLanjutkan?")) {
+            return;
+          }
+        } else {
+          if (!confirm("🔄 Bracket sudah ada.\n\nBuat ulang bracket dengan nama tim terbaru?\n\n(Semua data pertandingan lama akan dihapus)")) {
+            return;
+          }
+        }
+      }
+
+      // Reset bracket
       tournamentRounds = [];
+      matchHistory = [];
+      
       let matchCount = totalTeams / 2;
       let roundTitle = matchCount === 8 ? "16 BESAR" : (matchCount === 4 ? "PEREMPAT FINAL" : "SEMI FINAL");
       let round1 = [];
+      
       for(let i = 0; i < matchCount; i++) {
         const t1 = document.getElementById(`teamInput_${(i*2)+1}`)?.value.trim() || `Tim ${(i*2)+1}`;
         const t2 = document.getElementById(`teamInput_${(i*2)+2}`)?.value.trim() || `Tim ${(i*2)+2}`;
         round1.push({ team1: t1, team2: t2, score1: 0, score2: 0, winner: "", done: false, penaltyWinner: null });
       }
+      
       tournamentRounds.push({ title: roundTitle, matches: round1 });
+      
       while(matchCount > 1) {
         matchCount /= 2;
         let title = matchCount === 4 ? "PEREMPAT FINAL" : (matchCount === 2 ? "SEMI FINAL" : "GRAND FINAL");
         let next = [];
-        for(let i = 0; i < matchCount; i++) next.push({ team1: "TBD", team2: "TBD", score1: 0, score2: 0, winner: "", done: false, penaltyWinner: null });
+        for(let i = 0; i < matchCount; i++) {
+          next.push({ team1: "TBD", team2: "TBD", score1: 0, score2: 0, winner: "", done: false, penaltyWinner: null });
+        }
         tournamentRounds.push({ title, matches: next });
       }
-      saveState(); renderDynamicBracketView(); switchScreen('screen-bracket');
+      
+      saveState();
+      renderDynamicBracketView();
+      switchScreen('screen-bracket');
+    }
+
+    // 🆕 Refresh bracket dengan nama tim terbaru dari setting
+    function refreshBracketFromSettings() {
+      if (tournamentRounds.length === 0) {
+        alert("⚠️ Belum ada bracket. Silakan buat bracket dulu dari menu Setting.");
+        return;
+      }
+      
+      const hasStarted = tournamentRounds.some(round => 
+        round.matches.some(m => m.done)
+      );
+      
+      if (hasStarted) {
+        alert("⚠️ Turnamen sudah berjalan!\n\nTidak bisa mengubah nama tim setelah ada pertandingan yang selesai.\n\nSilakan reset turnamen jika ingin mengubah nama tim.");
+        return;
+      }
+      
+      if (!confirm("🔄 Update nama tim di bracket dengan data terbaru dari Setting?")) {
+        return;
+      }
+      
+      const firstRound = tournamentRounds[0];
+      
+      firstRound.matches.forEach((match, i) => {
+        const t1 = document.getElementById(`teamInput_${(i*2)+1}`)?.value.trim() || `Tim ${(i*2)+1}`;
+        const t2 = document.getElementById(`teamInput_${(i*2)+2}`)?.value.trim() || `Tim ${(i*2)+2}`;
+        match.team1 = t1;
+        match.team2 = t2;
+      });
+      
+      for (let i = 1; i < tournamentRounds.length; i++) {
+        tournamentRounds[i].matches.forEach(m => {
+          m.team1 = "TBD";
+          m.team2 = "TBD";
+          m.score1 = 0;
+          m.score2 = 0;
+          m.winner = "";
+          m.done = false;
+          m.penaltyWinner = null;
+        });
+      }
+      
+      saveState();
+      renderDynamicBracketView();
+      alert("✅ Nama tim berhasil diupdate!");
     }
 
     function renderDynamicBracketView() {
@@ -966,8 +1060,7 @@ function getTodayString() {
       const { rIdx, mIdx } = activeMatchCoord;
       const match = tournamentRounds[rIdx].matches[mIdx];
       const totalMin = parseInt(document.getElementById('inputMatchDuration').value) || 10;
-      
-      // Reset state pertandingan
+
       currentHalf = 1;
       halfDurationSeconds = Math.floor((totalMin * 60) / 2);
       remainingSeconds = halfDurationSeconds;
@@ -1097,8 +1190,7 @@ function getTodayString() {
         const minute = Math.floor(elapsed / 60) + 1;
         li.innerHTML = `⚽ <strong>${scorerName}</strong> (${minute}')`;
         targetList.appendChild(li);
-        
-        // Simpan ke statistik
+
         currentMatchScorers.push({ playerId, name: scorerName, team, minute });
         if (playerId) {
           const player = playersDB.find(p => p.id === playerId);
@@ -1140,14 +1232,14 @@ function getTodayString() {
       if (player) {
         if (type === 'yellow') player.yellowCards = (player.yellowCards || 0) + 1;
         else player.redCards = (player.redCards || 0) + 1;
-        
+
         const match = tournamentRounds[activeMatchCoord.rIdx].matches[activeMatchCoord.mIdx];
         const listId = player.team === match.team1 ? 'goalListA' : 'goalListB';
         const li = document.createElement('li');
         li.style.background = type === 'yellow' ? 'rgba(241,196,15,0.3)' : 'rgba(231,76,60,0.3)';
         li.innerHTML = `${type === 'yellow' ? '🟨' : '🟥'} <strong>#${player.no} ${player.name}</strong>`;
         document.getElementById(listId).appendChild(li);
-        
+
         matchCards.push({ playerId, name: player.name, type, team: player.team });
         saveState();
         alert(`${type === 'yellow' ? '🟨 Kartu Kuning' : '🟥 Kartu Merah'} diberikan kepada ${player.name}!`);
@@ -1200,25 +1292,25 @@ function getTodayString() {
       const ps = penaltyState;
       document.getElementById('penaltyScore1').innerText = ps.team1.score;
       document.getElementById('penaltyScore2').innerText = ps.team2.score;
-      
+
       const totalShots = Math.max(ps.maxShots, ps.team1.shots.length, ps.team2.shots.length);
-      
+
       for(let t = 1; t <= 2; t++) {
         const container = document.getElementById(`penaltyShots${t}`);
         container.innerHTML = "";
         const team = t === 1 ? ps.team1 : ps.team2;
-        
+
         for(let i = 0; i < totalShots; i++) {
           const shotDiv = document.createElement('div');
           shotDiv.className = "penalty-shot";
           const isCurrentTurn = !ps.winner && ps.currentTeam === t && i === team.shots.length;
           if (isCurrentTurn) shotDiv.classList.add('active-turn');
-          
+
           const label = document.createElement('span');
           label.innerText = `#${i + 1}`;
           label.style.cssText = "min-width:30px;font-weight:bold;color:#ffeb3b;";
           shotDiv.appendChild(label);
-          
+
           if (i < team.shots.length) {
             const result = team.shots[i];
             const btn = document.createElement('button');
@@ -1243,13 +1335,11 @@ function getTodayString() {
           container.appendChild(shotDiv);
         }
       }
-      
-      // Update status
+
       let status = ps.suddenDeath ? "⚡ SUDDEN DEATH!" : `Tendangan ke-${ps.shotNumber} dari ${ps.maxShots}`;
       status += ` | Giliran: ${ps.currentTeam === 1 ? ps.team1.name : ps.team2.name}`;
       document.getElementById('penaltyStatus').innerText = status;
-      
-      // Aktifkan tombol konfirmasi jika ada pemenang
+
       document.getElementById('btnConfirmPenalty').disabled = !ps.winner;
     }
 
@@ -1258,15 +1348,13 @@ function getTodayString() {
       const teamData = team === 1 ? ps.team1 : ps.team2;
       teamData.shots.push(result);
       if (result === 'goal') teamData.score++;
-      
-      // Pindah giliran
+
       if (ps.currentTeam === 1) ps.currentTeam = 2;
       else {
         ps.currentTeam = 1;
         ps.shotNumber++;
       }
-      
-      // Cek pemenang
+
       checkPenaltyWinner();
       renderPenaltyUI();
     }
@@ -1276,10 +1364,10 @@ function getTodayString() {
       const teamData = team === 1 ? ps.team1 : ps.team2;
       const oldResult = teamData.shots[shotIndex];
       const newResult = oldResult === 'goal' ? 'miss' : 'goal';
-      
+
       if (oldResult === 'goal') teamData.score--;
       else teamData.score++;
-      
+
       teamData.shots[shotIndex] = newResult;
       checkPenaltyWinner();
       renderPenaltyUI();
@@ -1288,26 +1376,21 @@ function getTodayString() {
     function checkPenaltyWinner() {
       const ps = penaltyState;
       const shots1 = ps.team1.shots.length, shots2 = ps.team2.shots.length;
-      const minShots = Math.min(shots1, shots2);
-      
+
       if (!ps.suddenDeath) {
-        // Cek setelah kedua tim sudah menembak jumlah yang sama
         if (shots1 === shots2) {
           const remaining1 = ps.maxShots - shots1;
           const remaining2 = ps.maxShots - shots2;
-          
-          // Jika satu tim tidak mungkin mengejar
+
           if (ps.team1.score > ps.team2.score + remaining2) { ps.winner = ps.team1.name; return; }
           if (ps.team2.score > ps.team1.score + remaining1) { ps.winner = ps.team2.name; return; }
-          
-          // Jika sudah 5-5 dan seri, masuk sudden death
+
           if (shots1 >= ps.maxShots && ps.team1.score === ps.team2.score) {
             ps.suddenDeath = true;
             ps.maxShots++;
           }
         }
       } else {
-        // Sudden death: jika kedua tim sudah nembak dan skor beda
         if (shots1 === shots2 && ps.team1.score !== ps.team2.score) {
           ps.winner = ps.team1.score > ps.team2.score ? ps.team1.name : ps.team2.name;
         } else if (shots1 === shots2) {
@@ -1334,24 +1417,22 @@ function getTodayString() {
     function saveMatchResult(s1, s2, winner, isPenalty) {
       clearInterval(matchTimerInterval);
       isTimerRunning = false;
-      
+
       const { rIdx, mIdx } = activeMatchCoord;
       const match = tournamentRounds[rIdx].matches[mIdx];
-      
+
       match.score1 = s1;
       match.score2 = s2;
       match.winner = winner;
       match.done = true;
       match.penaltyWinner = isPenalty ? winner : null;
 
-      // Update bracket berikutnya
       if(rIdx + 1 < tournamentRounds.length) {
         const nextMatchIdx = Math.floor(mIdx / 2);
         if(mIdx % 2 === 0) tournamentRounds[rIdx + 1].matches[nextMatchIdx].team1 = winner;
         else tournamentRounds[rIdx + 1].matches[nextMatchIdx].team2 = winner;
       }
 
-      // Simpan ke history
       matchHistory.push({
         id: Date.now(),
         round: tournamentRounds[rIdx].title,
@@ -1366,7 +1447,7 @@ function getTodayString() {
       saveState();
       renderDynamicBracketView();
       switchScreen('screen-bracket');
-      
+
       if (isPenalty) alert(`🥅 ${winner} memenangkan adu penalti!`);
       else alert(`🏁 Pertandingan selesai! Pemenang: ${winner}`);
     }
@@ -1382,7 +1463,6 @@ function getTodayString() {
 
     // ==================== HISTORY & TOP SCORER ====================
     function renderHistoryScreen() {
-      // Top Scorer
       const scorerStats = {};
       playersDB.forEach(p => { if(p.goals > 0) scorerStats[p.id] = { name: p.name, team: p.team, goals: p.goals, photo: p.photo }; });
       matchHistory.forEach(m => {
@@ -1392,7 +1472,7 @@ function getTodayString() {
           }
         });
       });
-      
+
       const sorted = Object.values(scorerStats).sort((a,b) => b.goals - a.goals);
       const topList = document.getElementById('topScorerList');
       if (sorted.length === 0) {
@@ -1410,7 +1490,6 @@ function getTodayString() {
         `).join('');
       }
 
-      // Match History
       const histList = document.getElementById('matchHistoryList');
       if (matchHistory.length === 0) {
         histList.innerHTML = `<p style="color: #7f8c8d;">Belum ada pertandingan selesai.</p>`;
