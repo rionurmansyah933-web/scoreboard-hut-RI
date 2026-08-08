@@ -213,7 +213,8 @@
               <label>Jumlah Tim Peserta:</label>
               <select id="selectTeamCount" onchange="renderTeamInputs()">
                 <option value="4">4 Tim</option>
-                <option value="8" selected>8 Tim</option>
+                <option value="7" selected>7 Tim (1 Bye Auto-Lolos)</option>
+                <option value="8">8 Tim</option>
                 <option value="16">16 Tim</option>
               </select>
             </div>
@@ -263,7 +264,7 @@
         <button class="btn-main btn-danger" onclick="clearAllSavedData()">🗑️ Hapus Semua Data</button>
       </div>
 
-      <!-- 🆕 BAGIAN BACKUP & RESTORE -->
+      <!-- BAGIAN BACKUP & RESTORE -->
       <div style="background: rgba(155,89,182,0.15); border: 2px solid #9b59b6; border-radius: 15px; padding: 20px; margin-top: 20px;">
         <h3 style="color: #e0a9ff; margin-bottom: 15px; text-align: center;">💾 Backup & Restore Data</h3>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
@@ -360,7 +361,6 @@
     <h1 style="color: #ffeb3b; text-align: center; font-size: 1.8rem; margin-bottom: 5px;">🏆 DIAGRAM TURNAMEN 3D</h1>
     <p style="color: #00ffcc; text-align: center; margin-bottom: 15px;">Klik "Mainkan" pada pertandingan yang aktif</p>
     
-    <!-- 🆕 TOMBOL REFRESH BRACKET -->
     <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap;">
       <button class="btn-main btn-warning" style="padding: 8px 16px; font-size: 0.9rem;" onclick="refreshBracketFromSettings()">
         🔄 Update Nama Tim dari Setting
@@ -452,23 +452,23 @@
     let isTimerRunning = false;
     const goalTimers = { score1: null, score2: null };
     let currentGoalScoreId = null;
-    let totalTeams = 8;
+    let totalTeams = 7;
     let tournamentRounds = [];
     let activeMatchCoord = null;
     let screenHistory = ['screen-setting'];
 
-    // 🆕 STATE BARU: TIMER 2 BABAK
+    // STATE TIMER 2 BABAK
     let currentHalf = 1;
     let halfDurationSeconds = 0;
 
-    // 🆕 STATE BARU: KARTU
+    // STATE KARTU
     let currentCardType = null;
     let matchCards = [];
 
-    // 🆕 STATE BARU: PENALTI
+    // STATE PENALTI
     let penaltyState = null;
 
-    // 🆕 STATE BARU: MATCH HISTORY
+    // STATE MATCH HISTORY
     let matchHistory = [];
     let currentMatchScorers = [];
 
@@ -519,13 +519,10 @@
       }
     }
 
-    // ============================================
-    // 🆕 FITUR EXPORT / IMPORT BACKUP DATA
-    // ============================================
-
+    // ==================== EXPORT / IMPORT BACKUP DATA ====================
     function exportAllData() {
       const backupData = {
-        version: "2.0",
+        version: "2.1",
         appName: "Turnamen HUT RI 81 - Scoreboard",
         exportDate: new Date().toLocaleString('id-ID'),
         data: {
@@ -609,7 +606,7 @@
       };
       downloadJSON(jsonData, `rekap_json_hut81_${getTodayString()}.json`);
 
-      alert("✅ Rekap berhasil didownload!\n\n📄 File .txt = untuk dibaca\n📄 File .json = untuk backup/restore");
+      alert("✅ Rekap berhasil didownload!");
     }
 
     function importData() {
@@ -626,23 +623,15 @@
             const backup = JSON.parse(ev.target.result);
 
             if (!backup.data || !backup.data.players) {
-              alert("❌ File backup tidak valid!\nPastikan Anda memilih file backup dari aplikasi ini.");
+              alert("❌ File backup tidak valid!");
               return;
             }
 
-            const confirmMsg = `⚠️ PERHATIAN!\n\n` +
-              `Import backup akan MENGGANTI semua data saat ini.\n\n` +
-              `📅 Backup dari: ${backup.exportDate || 'Tidak diketahui'}\n` +
-              `👥 Jumlah pemain: ${backup.data.players.length}\n` +
-              `🏆 Jumlah babak: ${backup.data.bracket ? backup.data.bracket.length : 0}\n` +
-              `📜 Jumlah pertandingan: ${backup.data.matchHistory ? backup.data.matchHistory.length : 0}\n\n` +
-              `Lanjutkan import?`;
-
-            if (confirm(confirmMsg)) {
+            if (confirm(`⚠️ Restore data ini?\n\nPemain: ${backup.data.players.length}\nTanggal: ${backup.exportDate || '-'}`)) {
               playersDB = backup.data.players || [];
               tournamentRounds = backup.data.bracket || [];
               matchHistory = backup.data.matchHistory || [];
-              totalTeams = backup.data.totalTeams || 8;
+              totalTeams = backup.data.totalTeams || 7;
 
               document.getElementById('selectTeamCount').value = totalTeams;
               document.getElementById('inputMatchDuration').value = backup.data.duration || 10;
@@ -663,14 +652,10 @@
               renderHistoryScreen();
               saveState();
 
-              alert("✅ Data berhasil di-restore dari backup!\n\n" +
-                `👥 ${playersDB.length} pemain dimuat\n` +
-                `🏆 ${tournamentRounds.length} babak dimuat\n` +
-                `📜 ${matchHistory.length} pertandingan dimuat`);
+              alert("✅ Data berhasil dimuat!");
             }
           } catch(err) {
-            alert("❌ Gagal membaca file backup!\n\nPastikan file yang dipilih adalah file backup valid (.json) dari aplikasi ini.");
-            console.error("Import error:", err);
+            alert("❌ File backup rusak / salah format.");
           }
         };
         reader.readAsText(file);
@@ -711,13 +696,12 @@
       img.src = base64;
     }
 
-    // ==================== FULLSCREEN ====================
+    // ==================== FULLSCREEN & AUDIO ====================
     function toggleFullscreen() {
       if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
       else document.exitFullscreen();
     }
 
-    // ==================== AUDIO ====================
     const bgMusic = document.getElementById('bgMusic');
     const musicToggleBtn = document.getElementById('musicToggleBtn');
     let isAudioEnabled = false, isMutedManually = false;
@@ -762,26 +746,8 @@
       
       if(screenId === 'screen-history') renderHistoryScreen();
       
-      // 🆕 Auto-refresh bracket saat masuk screen bracket (jika belum ada pertandingan)
       if(screenId === 'screen-bracket' && tournamentRounds.length > 0) {
-        const hasStarted = tournamentRounds.some(round => 
-          round.matches.some(m => m.done)
-        );
-        
-        if (!hasStarted) {
-          const firstRound = tournamentRounds[0];
-          let updated = false;
-          firstRound.matches.forEach((match, i) => {
-            const t1 = document.getElementById(`teamInput_${(i*2)+1}`)?.value.trim();
-            const t2 = document.getElementById(`teamInput_${(i*2)+2}`)?.value.trim();
-            if (t1 && t1 !== match.team1) { match.team1 = t1; updated = true; }
-            if (t2 && t2 !== match.team2) { match.team2 = t2; updated = true; }
-          });
-          if (updated) {
-            renderDynamicBracketView();
-            saveState();
-          }
-        }
+        renderDynamicBracketView();
       }
       
       if(screenId === 'screen-scoreboard') stopBgMusic(); else playBgMusic();
@@ -902,41 +868,46 @@
       });
     }
 
-    // ==================== TURNAMEN & BRACKET ====================
+    // ==================== TURNAMEN & BRACKET ADAPTIF (MENANGANI 7 TIM) ====================
     function initTournamentAndGoToBracket() {
-      // 🆕 Cek apakah bracket sudah ada
       if (tournamentRounds.length > 0) {
-        const hasStarted = tournamentRounds.some(round => 
-          round.matches.some(m => m.done)
-        );
-        
-        if (hasStarted) {
-          if (!confirm("⚠️ PERHATIAN!\n\nTurnamen sudah berjalan (ada pertandingan yang selesai).\nMembuat bracket baru akan MENGHAPUS semua progres!\n\nLanjutkan?")) {
-            return;
-          }
-        } else {
-          if (!confirm("🔄 Bracket sudah ada.\n\nBuat ulang bracket dengan nama tim terbaru?\n\n(Semua data pertandingan lama akan dihapus)")) {
-            return;
-          }
-        }
+        if (!confirm("🔄 Buat ulang bracket dari awal? Progres saat ini akan dihapus.")) return;
       }
 
-      // Reset bracket
       tournamentRounds = [];
       matchHistory = [];
       
-      let matchCount = totalTeams / 2;
-      let roundTitle = matchCount === 8 ? "16 BESAR" : (matchCount === 4 ? "PEREMPAT FINAL" : "SEMI FINAL");
+      // Hitung bracket size berbasis 2 pangkat (4, 8, 16)
+      let bracketSlots = 8;
+      if (totalTeams <= 4) bracketSlots = 4;
+      else if (totalTeams > 8) bracketSlots = 16;
+
+      let roundTitle = bracketSlots === 16 ? "16 BESAR" : (bracketSlots === 8 ? "PEREMPAT FINAL" : "SEMI FINAL");
+      let matchCount = bracketSlots / 2;
       let round1 = [];
       
       for(let i = 0; i < matchCount; i++) {
-        const t1 = document.getElementById(`teamInput_${(i*2)+1}`)?.value.trim() || `Tim ${(i*2)+1}`;
-        const t2 = document.getElementById(`teamInput_${(i*2)+2}`)?.value.trim() || `Tim ${(i*2)+2}`;
-        round1.push({ team1: t1, team2: t2, score1: 0, score2: 0, winner: "", done: false, penaltyWinner: null });
+        let t1Index = (i * 2) + 1;
+        let t2Index = (i * 2) + 2;
+
+        let t1 = t1Index <= totalTeams ? (document.getElementById(`teamInput_${t1Index}`)?.value.trim() || `Tim 0${t1Index}`) : "BYE";
+        let t2 = t2Index <= totalTeams ? (document.getElementById(`teamInput_${t2Index}`)?.value.trim() || `Tim 0${t2Index}`) : "BYE";
+
+        let isByeMatch = (t1 === "BYE" || t2 === "BYE");
+        let winnerName = "";
+        let isDone = false;
+
+        if (isByeMatch) {
+          winnerName = t1 === "BYE" ? t2 : t1;
+          isDone = true;
+        }
+
+        round1.push({ team1: t1, team2: t2, score1: 0, score2: 0, winner: winnerName, done: isDone, penaltyWinner: null });
       }
       
       tournamentRounds.push({ title: roundTitle, matches: round1 });
       
+      // Babak Selanjutnya
       while(matchCount > 1) {
         matchCount /= 2;
         let title = matchCount === 4 ? "PEREMPAT FINAL" : (matchCount === 2 ? "SEMI FINAL" : "GRAND FINAL");
@@ -946,56 +917,52 @@
         }
         tournamentRounds.push({ title, matches: next });
       }
+
+      // Salurkan pemenang BYE dari Round 1 ke Round 2
+      round1.forEach((m, idx) => {
+        if(m.done && m.winner && tournamentRounds.length > 1) {
+          const nextMatchIdx = Math.floor(idx / 2);
+          if (idx % 2 === 0) tournamentRounds[1].matches[nextMatchIdx].team1 = m.winner;
+          else tournamentRounds[1].matches[nextMatchIdx].team2 = m.winner;
+        }
+      });
       
       saveState();
       renderDynamicBracketView();
       switchScreen('screen-bracket');
     }
 
-    // 🆕 Refresh bracket dengan nama tim terbaru dari setting
     function refreshBracketFromSettings() {
       if (tournamentRounds.length === 0) {
-        alert("⚠️ Belum ada bracket. Silakan buat bracket dulu dari menu Setting.");
-        return;
-      }
-      
-      const hasStarted = tournamentRounds.some(round => 
-        round.matches.some(m => m.done)
-      );
-      
-      if (hasStarted) {
-        alert("⚠️ Turnamen sudah berjalan!\n\nTidak bisa mengubah nama tim setelah ada pertandingan yang selesai.\n\nSilakan reset turnamen jika ingin mengubah nama tim.");
-        return;
-      }
-      
-      if (!confirm("🔄 Update nama tim di bracket dengan data terbaru dari Setting?")) {
+        alert("⚠️ Belum ada bracket! Buat diagram baru terlebih dahulu.");
         return;
       }
       
       const firstRound = tournamentRounds[0];
-      
       firstRound.matches.forEach((match, i) => {
-        const t1 = document.getElementById(`teamInput_${(i*2)+1}`)?.value.trim() || `Tim ${(i*2)+1}`;
-        const t2 = document.getElementById(`teamInput_${(i*2)+2}`)?.value.trim() || `Tim ${(i*2)+2}`;
-        match.team1 = t1;
-        match.team2 = t2;
+        let t1Idx = (i*2)+1;
+        let t2Idx = (i*2)+2;
+        
+        if (t1Idx <= totalTeams) match.team1 = document.getElementById(`teamInput_${t1Idx}`)?.value.trim() || `Tim 0${t1Idx}`;
+        else match.team1 = "BYE";
+
+        if (t2Idx <= totalTeams) match.team2 = document.getElementById(`teamInput_${t2Idx}`)?.value.trim() || `Tim 0${t2Idx}`;
+        else match.team2 = "BYE";
+
+        if (match.team1 === "BYE" || match.team2 === "BYE") {
+          match.done = true;
+          match.winner = match.team1 === "BYE" ? match.team2 : match.team1;
+          if(tournamentRounds.length > 1) {
+            const nextMatchIdx = Math.floor(i / 2);
+            if (i % 2 === 0) tournamentRounds[1].matches[nextMatchIdx].team1 = match.winner;
+            else tournamentRounds[1].matches[nextMatchIdx].team2 = match.winner;
+          }
+        }
       });
-      
-      for (let i = 1; i < tournamentRounds.length; i++) {
-        tournamentRounds[i].matches.forEach(m => {
-          m.team1 = "TBD";
-          m.team2 = "TBD";
-          m.score1 = 0;
-          m.score2 = 0;
-          m.winner = "";
-          m.done = false;
-          m.penaltyWinner = null;
-        });
-      }
-      
+
       saveState();
       renderDynamicBracketView();
-      alert("✅ Nama tim berhasil diupdate!");
+      alert("✅ Nama tim di bagan berhasil disinkronkan!");
     }
 
     function renderDynamicBracketView() {
@@ -1007,14 +974,16 @@
         title.innerText = round.title; col.appendChild(title);
         round.matches.forEach((m, mIdx) => {
           const box = document.createElement('div'); box.className = "bracket-match";
-          const canPlay = !(m.team1 === "TBD" || m.team2 === "TBD" || m.done);
+          const canPlay = !(m.team1 === "TBD" || m.team2 === "TBD" || m.team1 === "BYE" || m.team2 === "BYE" || m.done);
           const t1c = m.done ? (m.winner === m.team1 ? 'winner' : 'loser') : '';
           const t2c = m.done ? (m.winner === m.team2 ? 'winner' : 'loser') : '';
           const penNote = m.penaltyWinner ? `<div style="font-size:0.7rem;color:#f39c12;text-align:center;">(Penalti)</div>` : '';
+          const byeNote = (m.team1 === "BYE" || m.team2 === "BYE") ? `<div style="font-size:0.7rem;color:#00ffcc;text-align:center;">(Lolos Otomatis)</div>` : '';
+          
           box.innerHTML = `
-            <div class="bracket-team ${t1c}"><span>${m.team1}</span><span>${m.done ? m.score1 : '-'}</span></div>
-            <div class="bracket-team ${t2c}"><span>${m.team2}</span><span>${m.done ? m.score2 : '-'}</span></div>
-            ${penNote}
+            <div class="bracket-team ${t1c}"><span>${m.team1}</span><span>${m.done ? (m.team1 === 'BYE' ? '-' : m.score1) : '-'}</span></div>
+            <div class="bracket-team ${t2c}"><span>${m.team2}</span><span>${m.done ? (m.team2 === 'BYE' ? '-' : m.score2) : '-'}</span></div>
+            ${penNote} ${byeNote}
             <button class="btn-main" style="width:100%;padding:4px;font-size:0.8rem;margin-top:5px;" ${canPlay ? '' : 'disabled'} onclick="prepareDynamicMatch(${rIdx}, ${mIdx})">
               ${m.done ? '✔ Selesai' : '▶️ Mainkan'}
             </button>`;
@@ -1051,7 +1020,7 @@
           else { gridB.appendChild(card); hasB = true; }
         }
       });
-      if (!hasA || !hasB) alert(`⚠️ Salah satu tim belum punya pemain!\n${match.team1}: ${hasA?'✅':'❌'}\n${match.team2}: ${hasB?'✅':'❌'}`);
+      if (!hasA || !hasB) alert(`⚠️ Perhatian: Salah satu/kedua tim belum mendaftarkan pemain di menu Setting.\n\n${match.team1}: ${hasA?'✅ Ada':'❌ Kosong'}\n${match.team2}: ${hasB?'✅ Ada':'❌ Kosong'}`);
       switchScreen('screen-lineup');
     }
 
@@ -1160,7 +1129,7 @@
       const match = tournamentRounds[activeMatchCoord.rIdx].matches[activeMatchCoord.mIdx];
       const targetTeam = scoreId === 'score1' ? match.team1 : match.team2;
       const teamPlayers = playersDB.filter(p => p.team === targetTeam);
-      document.getElementById('modalGoalTitle').innerText = `⚽ PENCETAK GOL (${targetTeam})`;
+      document.getElementById('modalGoalTitle').innerText = `⚽ PILIH PENCETAK GOL (${targetTeam})`;
       const grid = document.getElementById('modalPlayerList'); grid.innerHTML = "";
       if(teamPlayers.length === 0) {
         grid.innerHTML = `<p style="grid-column:1/-1;color:#ff9999;">Tidak ada pemain di ${targetTeam}.</p>`;
@@ -1185,7 +1154,6 @@
       if(currentGoalScoreId) {
         const targetList = currentGoalScoreId === 'score1' ? document.getElementById('goalListA') : document.getElementById('goalListB');
         const li = document.createElement('li');
-        const totalSec = halfDurationSeconds * 2;
         const elapsed = (currentHalf === 1) ? (halfDurationSeconds - remainingSeconds) : (halfDurationSeconds + (halfDurationSeconds - remainingSeconds));
         const minute = Math.floor(elapsed / 60) + 1;
         li.innerHTML = `⚽ <strong>${scorerName}</strong> (${minute}')`;
@@ -1448,7 +1416,7 @@
       renderDynamicBracketView();
       switchScreen('screen-bracket');
 
-      if (isPenalty) alert(`🥅 ${winner} memenangkan adu penalti!`);
+      if (isPenalty) alert(`GK ${winner} memenangkan adu penalti!`);
       else alert(`🏁 Pertandingan selesai! Pemenang: ${winner}`);
     }
 
